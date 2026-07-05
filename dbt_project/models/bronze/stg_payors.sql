@@ -8,4 +8,4 @@ SELECT
     TRIM(state) AS state,
     TRIM(zip) AS zip,
     TRIM(phone) AS phone
-FROM {{ source('staging', 'raw_payors') }}
+FROM {{ source('staging', 'RAW_PAYORS') }}

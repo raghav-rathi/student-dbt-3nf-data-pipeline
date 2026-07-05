@@ -16,4 +16,4 @@ SELECT
     TRIM(zip) AS zip,
     TRIM(insurance_provider) AS insurance_provider,
     CAST(updated_at AS TIMESTAMP) AS updated_at
-FROM {{ source('staging', 'raw_patients') }}
+FROM {{ source('staging', 'RAW_PATIENTS') }}

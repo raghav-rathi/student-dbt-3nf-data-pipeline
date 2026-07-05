@@ -9,4 +9,4 @@ SELECT
     TRIM(zip) AS zip,
     TRIM(phone) AS phone,
     CAST(revenue AS DECIMAL(12,2)) AS revenue
-FROM {{ source('staging', 'raw_organizations') }}
+FROM {{ source('staging', 'RAW_ORGANIZATIONS') }}

@@ -20,11 +20,11 @@ transformed AS (
         start_time AS encounter_start_at,
         stop_time AS encounter_stop_at,
         
-        -- Business transformation 1: Length of stay in hours
+        -- Business transformation 1: Length of stay in hours (Snowflake DATEDIFF)
         CAST(
             CASE 
                 WHEN stop_time IS NOT NULL AND start_time IS NOT NULL 
-                THEN date_diff('hour', start_time, stop_time)
+                THEN DATEDIFF('hour', start_time, stop_time)
                 ELSE 0 
             END AS INT
         ) AS length_of_stay_hours,

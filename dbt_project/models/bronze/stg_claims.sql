@@ -7,4 +7,4 @@ SELECT
     TRIM(status) AS claim_status,
     CAST(outstandingdate AS DATE) AS outstanding_date,
     CAST(servicedate AS DATE) AS service_date
-FROM {{ source('staging', 'raw_claims') }}
+FROM {{ source('staging', 'RAW_CLAIMS') }}

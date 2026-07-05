@@ -10,4 +10,4 @@ SELECT
     TRIM(city) AS city,
     TRIM(state) AS state,
     TRIM(zip) AS zip
-FROM {{ source('staging', 'raw_providers') }}
+FROM {{ source('staging', 'RAW_PROVIDERS') }}

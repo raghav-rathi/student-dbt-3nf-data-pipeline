@@ -2,14 +2,14 @@ version: 2
 
 sources:
   - name: staging
-    schema: main_staging
+    schema: STAGING
     tables:
-      - name: raw_patients
-      - name: raw_encounters
-      - name: raw_providers
-      - name: raw_organizations
-      - name: raw_payors
-      - name: raw_conditions
-      - name: raw_medications
-      - name: raw_procedures
-      - name: raw_claims
+      - name: RAW_PATIENTS
+      - name: RAW_ENCOUNTERS
+      - name: RAW_PROVIDERS
+      - name: RAW_ORGANIZATIONS
+      - name: RAW_PAYORS
+      - name: RAW_CONDITIONS
+      - name: RAW_MEDICATIONS
+      - name: RAW_PROCEDURES
+      - name: RAW_CLAIMS

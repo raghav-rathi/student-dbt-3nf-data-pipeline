@@ -9,9 +9,9 @@ hospital_3nf_pipeline:
 
     snowflake:
       type: snowflake
-      account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'demo_account') }}"
-      user: "{{ env_var('SNOWFLAKE_USER', 'demo_user') }}"
-      password: "{{ env_var('SNOWFLAKE_PASSWORD', 'demo_pass') }}"
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'RWPEXUG-HB24805') }}"
+      user: "{{ env_var('SNOWFLAKE_USER', 'HARSHSOMANI2003') }}"
+      private_key_path: "/Users/whiterose/.snowflake/snowflake_key.p8"
       role: "{{ env_var('SNOWFLAKE_ROLE', 'ACCOUNTADMIN') }}"
       database: "{{ env_var('SNOWFLAKE_DATABASE', 'HEALTHCARE_DB') }}"
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'COMPUTE_WH') }}"
