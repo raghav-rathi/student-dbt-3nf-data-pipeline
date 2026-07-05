@@ -1,4 +1,6 @@
-# Environments & Packages
+# Environments & Credentials
+.env
+*.env
 venv/
 *.pyc
 __pycache__/
