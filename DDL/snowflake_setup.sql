@@ -2,6 +2,7 @@
 -- SNOWFLAKE INFRASTRUCTURE SETUP & AWS S3 INGESTION SCRIPT
 -- Database: HEALTHCARE_DB
 -- Schema: STAGING
+-- Bucket: s3://healthcare-pipeline-harsh/raw/
 -- ============================================================================
 
 -- 1. Create Warehouse, Database, and Schemas
@@ -28,8 +29,8 @@ CREATE OR REPLACE STORAGE INTEGRATION s3_healthcare_int
   TYPE = EXTERNAL_STAGE
   STORAGE_PROVIDER = 'S3'
   ENABLED = TRUE
-  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::123456789012:role/snowflake_s3_role'
-  STORAGE_ALLOWED_LOCATIONS = ('s3://my-healthcare-pipeline-data/raw/');
+  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::272419176264:role/snowflake_s3_role'
+  STORAGE_ALLOWED_LOCATIONS = ('s3://healthcare-pipeline-harsh/raw/');
 
 -- 3. File Format for CSV Ingestion
 CREATE OR REPLACE FILE FORMAT csv_ff
@@ -41,7 +42,7 @@ CREATE OR REPLACE FILE FORMAT csv_ff
 -- 4. External Stage pointing to AWS S3
 CREATE OR REPLACE STAGE s3_raw_stage
   STORAGE_INTEGRATION = s3_healthcare_int
-  URL = 's3://my-healthcare-pipeline-data/raw/'
+  URL = 's3://healthcare-pipeline-harsh/raw/'
   FILE_FORMAT = csv_ff;
 
 -- 5. Staging Tables Creation
