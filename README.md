@@ -32,7 +32,6 @@ This data pipeline ingests synthetic electronic health record (EHR) data generat
   - One Big Table (OBT) wide table (`gold_obt_healthcare_analytics`) optimized for low-latency BI queries.
 - Data Quality Test Suite: 24 automated dbt tests validating primary key uniqueness, non-null constraints, and foreign key referential integrity (100% PASS rate).
 - Executive Analytics Dashboard: Interactive HTML5/CSS3/Chart.js dashboard with dynamic filters for facility, payer, and visit class.
-- Interactive dbt Lineage Graph: Self-contained DAG visualization site (`dbt_lineage_docs.html`).
 
 ---
 
@@ -75,7 +74,6 @@ This data pipeline ingests synthetic electronic health record (EHR) data generat
                                           ▼
                    [ Executive Analytics Dashboard (dashboard.html) ]
                     [ Power BI Report Dataset (obt_analytics.csv) ]
-                    [ Interactive dbt Lineage DAG (dbt_docs.html) ]
 ```
 
 ---
@@ -247,6 +245,5 @@ cd dbt_project
 ../venv/bin/dbt build --target snowflake  # Live Snowflake Cloud Run
 ```
 
-### 4. View Interactive Dashboards
+### 4. View Interactive Dashboard
 - Executive Dashboard: Open `power_bi/dashboard.html` in your web browser.
-- dbt Lineage Graph DAG: Open `dbt_project/dbt_lineage_docs.html` in your web browser.
