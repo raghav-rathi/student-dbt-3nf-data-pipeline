@@ -15,20 +15,19 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(base_dir)
     print("=" * 70)
-    print(" 🏥 SYNTHEA HEALTHCARE DATA PIPELINE — AUTOMATED EXECUTION")
-    print(" Stack: S3/Snowflake Specs + DuckDB Engine + dbt Medallion Architecture")
+    print(" HEALTHCARE DATA PIPELINE — AUTOMATED LOCAL EXECUTION")
+    print(" Architecture: AWS S3 + Snowflake Specs + DuckDB + dbt 3NF Pipeline")
     print("=" * 70)
 
-    # 1. GENERATE SYNTHEA DATA
+    # 1. VERIFY RAW DATASET CSV FILES
     raw_dir = os.path.join(base_dir, "data", "synthea_raw")
     if not os.path.exists(raw_dir) or len(os.listdir(raw_dir)) == 0:
-        print("\n[STEP 1] Generating Synthea relational CSV dataset...")
-        from scripts.generate_synthea_data import generate_synthea_dataset
-        generate_synthea_dataset(raw_dir)
-    else:
-        print(f"\n[STEP 1] Synthea raw data existing in {raw_dir}")
+        print(f"\n[ERROR] Raw dataset directory missing or empty: {raw_dir}")
+        sys.exit(1)
 
-    # 2. LOAD RAW CSVs INTO STAGING SCHEMA (DuckDB / Snowflake emulation)
+    print(f"\n[STEP 1] Found raw imported dataset in {raw_dir}")
+
+    # 2. LOAD RAW CSVs INTO STAGING SCHEMA
     print("\n[STEP 2] Initializing database and staging schemas...")
     db_path = os.path.join(base_dir, "data", "healthcare_dw.duckdb")
     con = duckdb.connect(db_path)
@@ -61,7 +60,7 @@ def main():
     run_cmd(f"{dbt_bin} run", cwd=dbt_dir)
 
     # 5. RUN dbt TESTS
-    print("\n[STEP 5] Running 25+ automated dbt data quality & FK relationship tests...")
+    print("\n[STEP 5] Running 24 automated dbt data quality & FK relationship tests...")
     run_cmd(f"{dbt_bin} test", cwd=dbt_dir)
 
     # 6. EXPORT GOLD OBT TO CSV FOR POWER BI
