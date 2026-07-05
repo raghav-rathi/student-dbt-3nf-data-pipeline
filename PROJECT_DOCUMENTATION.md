@@ -1,12 +1,12 @@
 # Comprehensive Healthcare Analytics & Medallion Data Pipeline Guide
 
-This document provides a comprehensive technical breakdown of the Healthcare Data Pipeline, including architecture diagrams, design decisions, data dictionaries, query logic, and interview preparation questions.
+This document provides a technical breakdown of the Healthcare Data Pipeline, including architecture diagrams, design decisions, data dictionaries, and query logic.
 
 ---
 
 ## Architecture Overview
 
-The system processes raw electronic health record (EHR) data from Synthea through a 3-tier Medallion Data Architecture:
+The system processes electronic health record (EHR) data through a 3-tier Medallion Data Architecture:
 
 1. Ingestion Layer: Raw CSV files landed in AWS S3 (`s3://healthcare-pipeline-harsh/raw/`).
 2. Warehouse Layer: Staged in Snowflake Data Warehouse (`HEALTHCARE_DB.STAGING`).
@@ -48,16 +48,16 @@ The system processes raw electronic health record (EHR) data from Synthea throug
 
 ---
 
-## Key Interview Preparation Summary
+## Technical Summary
 
-### 1. Why 3NF in Silver?
+### 1. 3NF Relational Model in Silver
 Normalizing data into 3NF in Silver eliminates redundancies and update anomalies, creating an enterprise single source of truth before building dimensional Gold models.
 
-### 2. How does Incremental MERGE work?
+### 2. Incremental MERGE Materialization
 `fct_encounters` uses `materialized='incremental'` with a 3-day lookback window (`WHERE encounter_start_at >= MAX(encounter_start_at) - INTERVAL '3 days'`). dbt compiles this into a native Snowflake MERGE statement, updating existing records and inserting new ones without re-scanning the entire table.
 
-### 3. How does SCD Type 2 work?
+### 3. Slowly Changing Dimensions (SCD Type 2)
 `snapshot_patients` monitors changes in patient address or insurance provider. When a change occurs, dbt closes out the old row (`dbt_valid_to = current_timestamp`, `dbt_is_current = false`) and inserts a new active row (`dbt_is_current = true`).
 
-### 4. How was security handled?
+### 4. Key-Pair Authentication Security
 We implemented RSA Key-Pair Authentication (`snowflake_key.p8`), eliminating plaintext passwords and bypassing interactive MFA prompts during automated dbt execution.
