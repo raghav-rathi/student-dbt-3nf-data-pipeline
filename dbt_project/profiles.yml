@@ -1,0 +1,8 @@
+harsh_student_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: '/Users/whiterose/.gemini/antigravity-ide/scratch/HarshProject/data/student_dw.duckdb'
+      extensions:
+        - parquet

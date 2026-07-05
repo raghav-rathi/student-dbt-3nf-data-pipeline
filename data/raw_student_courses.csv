@@ -1,0 +1,4 @@
+StudentID,StudentName,StudentPhone,CourseIDs,CourseNames,InstructorID,InstructorName,InstructorDept,Grade
+S01,Rahul Sharma,"98765, 98764","C01, C02","Java, DBMS","I10, I11","Anil Kumar, Sneha Rao","Computer Science, Information Tech","A, B"
+S02,Priya Mehta,"91234","C01","Java","I10","Anil Kumar","Computer Science","A"
+S03,Amit Verma,"99887, 99886","C02, C03","DBMS, Networks","I11, I12","Sneha Rao, Vikram Das","Information Tech, Computer Science","C, B"

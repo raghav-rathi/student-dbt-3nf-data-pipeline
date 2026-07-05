@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: dim_students
+    columns:
+      - name: student_id
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_courses
+    columns:
+      - name: course_id
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_instructors
+    columns:
+      - name: instructor_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fact_enrollments
+    columns:
+      - name: student_id
+        tests:
+          - not_null
+      - name: course_id
+        tests:
+          - not_null
