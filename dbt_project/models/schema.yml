@@ -1,32 +1,82 @@
 version: 2
 
 models:
-  - name: dim_students
+  - name: dim_patients
+    description: "Dimension table for patients (3NF)"
     columns:
-      - name: student_id
+      - name: patient_id
         tests:
           - unique
           - not_null
 
-  - name: dim_courses
+  - name: dim_doctors
+    description: "Dimension table for doctors (3NF)"
     columns:
-      - name: course_id
+      - name: doctor_id
         tests:
           - unique
           - not_null
 
-  - name: dim_instructors
+  - name: dim_departments
+    description: "Dimension table for hospital departments (3NF)"
     columns:
-      - name: instructor_id
+      - name: department_id
         tests:
           - unique
           - not_null
 
-  - name: fact_enrollments
+  - name: dim_diagnoses
+    description: "Dimension table for ICD diagnosis codes (3NF)"
     columns:
-      - name: student_id
+      - name: diagnosis_code
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_medications
+    description: "Dimension table for medications and dosages (3NF)"
+    columns:
+      - name: medication_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fact_visits
+    description: "Fact table for patient hospital visits with billing"
+    columns:
+      - name: patient_id
         tests:
           - not_null
-      - name: course_id
+      - name: visit_date
+        tests:
+          - not_null
+
+  - name: patient_doctors
+    description: "Many-to-many junction: patients to doctors"
+    columns:
+      - name: patient_id
+        tests:
+          - not_null
+      - name: doctor_id
+        tests:
+          - not_null
+
+  - name: patient_diagnoses
+    description: "Many-to-many junction: patients to diagnoses"
+    columns:
+      - name: patient_id
+        tests:
+          - not_null
+      - name: diagnosis_code
+        tests:
+          - not_null
+
+  - name: patient_medications
+    description: "Many-to-many junction: patients to medications"
+    columns:
+      - name: patient_id
+        tests:
+          - not_null
+      - name: medication_id
         tests:
           - not_null

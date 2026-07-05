@@ -1,8 +1,8 @@
-student_dbt_3nf_pipeline:
+hospital_3nf_pipeline:
   target: dev
   outputs:
     dev:
       type: duckdb
-      path: '/Users/whiterose/.gemini/antigravity-ide/scratch/HarshProject/data/student_dw.duckdb'
+      path: '../data/hospital_dw.duckdb'
       extensions:
         - parquet

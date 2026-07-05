@@ -1,116 +1,246 @@
-# 🎓 Student DBT 3NF Data Pipeline
+# 🏥 Hospital 3NF Data Pipeline — DBT + DuckDB
 
-## 📋 Executive Summary
-This project takes an unnormalized student enrollment dataset containing multi-valued attributes and normalizes it up to **3rd Normal Form (3NF)** using **DBT (Data Build Tool)** and **DuckDB**. It outputs an analytics-ready Star Schema table for **Power BI reporting**.
+A production-grade data engineering pipeline that demonstrates **Third Normal Form (3NF)** database normalization on a real-world **Hospital Management System** dataset using **DBT (Data Build Tool)** and **DuckDB**.
 
----
+## 🏗️ Architecture Overview
 
-## 🏗️ Architecture & Medallion Layers
-
-```text
-raw_student_courses.csv (Raw Ingestion)
-          │
-          ▼
-  🥉 BRONZE LAYER (`bronze_raw_students`)
-          │
-          ▼ (3NF Normalization: String Splitting & Unnesting)
-  🥈 SILVER LAYER (Normalized 3NF Tables)
-    ├── dim_students
-    ├── student_phones
-    ├── dim_courses
-    ├── dim_instructors
-    ├── course_instructors
-    └── fact_enrollments
-          │
-          ▼ (Star Schema Join & Denormalization)
-  🥇 GOLD LAYER (`obt_student_analytics`) -> Exported to Power BI
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        DATA PIPELINE ARCHITECTURE                       │
+├──────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  📄 raw_hospital_records.csv                                            │
+│         │ (Unnormalized, multi-valued attributes)                       │
+│         ▼                                                                │
+│  ┌─────────────────────────────────────────────┐                        │
+│  │          🟤 BRONZE LAYER (Raw Staging)       │                        │
+│  │  bronze_raw_hospital                         │                        │
+│  │  • 1:1 copy of CSV with type casting        │                        │
+│  │  • 10 records, 18 columns                   │                        │
+│  └──────────────────┬──────────────────────────┘                        │
+│                     │                                                    │
+│                     ▼                                                    │
+│  ┌─────────────────────────────────────────────┐                        │
+│  │        🔵 SILVER LAYER (3NF Normalized)      │                        │
+│  │                                               │                       │
+│  │  DIMENSION TABLES:                            │                       │
+│  │  ├── dim_patients        (10 rows)           │                        │
+│  │  ├── dim_doctors          (7 rows)           │                        │
+│  │  ├── dim_departments      (7 rows)           │                        │
+│  │  ├── dim_diagnoses       (17 rows)           │                        │
+│  │  └── dim_medications     (19 rows)           │                        │
+│  │                                               │                       │
+│  │  JUNCTION TABLES (Many-to-Many):              │                       │
+│  │  ├── patient_phones      (16 rows)           │                        │
+│  │  ├── patient_doctors     (20 rows)           │                        │
+│  │  ├── patient_diagnoses   (20 rows)           │                        │
+│  │  └── patient_medications (28 rows)           │                        │
+│  │                                               │                       │
+│  │  FACT TABLE:                                  │                       │
+│  │  └── fact_visits         (19 rows)           │                        │
+│  └──────────────────┬──────────────────────────┘                        │
+│                     │                                                    │
+│                     ▼                                                    │
+│  ┌─────────────────────────────────────────────┐                        │
+│  │     🟡 GOLD LAYER (Analytics / OBT)          │                        │
+│  │  obt_hospital_analytics  (340 rows)          │                        │
+│  │  • Denormalized wide table for Power BI     │                        │
+│  │  • Joins all dimensions + facts              │                        │
+│  └─────────────────────────────────────────────┘                        │
+│                     │                                                    │
+│                     ▼                                                    │
+│  ┌─────────────────────────────────────────────┐                        │
+│  │        📊 POWER BI / ANALYTICS               │                        │
+│  │  obt_hospital_analytics.csv                  │                        │
+│  └─────────────────────────────────────────────┘                        │
+│                                                                          │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
----
+## 📋 Problem Statement
 
-## 📐 3NF Normalization Proofs
+A hospital maintains patient records in a **single flat CSV file** where:
+- Each patient has **multiple phone numbers** in one cell
+- Each patient is assigned **multiple doctors** (comma-separated)
+- Each patient has **multiple diagnoses** (ICD codes)
+- Each patient is prescribed **multiple medications** with dosages
+- Visit history with billing is **stored as comma-separated values**
 
-### 1. First Normal Form (1NF)
-- **Violation in Raw:** `StudentPhone`, `CourseIDs`, `CourseNames`, `InstructorID`, `InstructorName`, `InstructorDept`, and `Grade` contained comma-separated multi-valued lists (e.g. `98765, 98764`).
-- **1NF Solution:** All repeating attributes were unnested using DuckDB's `UNNEST(STRING_SPLIT(...))` into individual atomic rows.
+This **violates 1NF, 2NF, and 3NF** due to:
+- **Multi-valued attributes** (repeating groups in single cells)
+- **Partial dependencies** (doctor name depends on doctor ID, not on patient)
+- **Transitive dependencies** (department name depends on department ID via doctor)
 
-### 2. Second Normal Form (2NF)
-- **Violation in Raw:** Course details (`CourseNames`) depended only on `CourseIDs`, and Instructor details (`InstructorName`, `InstructorDept`) depended only on `InstructorID`, creating partial key dependencies.
-- **2NF Solution:** Extracted `dim_courses` and `dim_instructors` so non-key attributes depend on their entire candidate primary key.
+## 🔧 Normalization Steps
 
-### 3. Third Normal Form (3NF)
-- **Violation in Raw:** Transitive dependencies existed where `InstructorDept` depended on `InstructorID`, not `StudentID`.
-- **3NF Solution:** Separated into 6 atomic entities:
-  1. `dim_students` (`student_id` [PK], `student_name`)
-  2. `student_phones` (`student_id` [FK], `phone_number`)
-  3. `dim_courses` (`course_id` [PK], `course_name`)
-  4. `dim_instructors` (`instructor_id` [PK], `instructor_name`, `instructor_dept`)
-  5. `course_instructors` (`course_id` [FK], `instructor_id` [FK])
-  6. `fact_enrollments` (`student_id` [FK], `course_id` [FK], `grade`)
+### 1NF — Eliminate Repeating Groups
+Split comma-separated values into atomic rows using `STRING_SPLIT + UNNEST`.
 
----
+### 2NF — Remove Partial Dependencies
+Create dimension tables where attributes depend on their own primary key:
+- `dim_patients` — patient_id → name, DOB, gender
+- `dim_doctors` — doctor_id → name, specialization
+- `dim_departments` — department_id → name
+- `dim_diagnoses` — diagnosis_code → description
+- `dim_medications` — medication_id → name
 
-## 📊 Summary of Data Warehouse Tables
+### 3NF — Remove Transitive Dependencies
+- Doctor's department (`department_id`) is a foreign key in `dim_doctors`, not stored with patients
+- Medication dosage is stored in `patient_medications` junction table (same med can have different dosages)
 
-### 1. `dim_students`
-| student_id | student_name |
-| :--- | :--- |
-| S01 | Rahul Sharma |
-| S02 | Priya Mehta |
-| S03 | Amit Verma |
+## 📁 Project Structure
 
-### 2. `student_phones`
-| student_id | phone_number |
-| :--- | :--- |
-| S01 | 98765 |
-| S01 | 98764 |
-| S02 | 91234 |
-| S03 | 99887 |
-| S03 | 99886 |
+```
+├── data/
+│   ├── raw_hospital_records.csv        # Source: Unnormalized hospital data
+│   └── hospital_dw.duckdb             # DuckDB data warehouse
+├── dbt_project/
+│   ├── dbt_project.yml                # DBT project configuration
+│   ├── profiles.yml                   # DuckDB connection profile
+│   └── models/
+│       ├── schema.yml                 # Data quality tests (18 tests)
+│       ├── bronze/
+│       │   └── bronze_raw_hospital.sql
+│       ├── silver/
+│       │   ├── dim_patients.sql
+│       │   ├── dim_doctors.sql
+│       │   ├── dim_departments.sql
+│       │   ├── dim_diagnoses.sql
+│       │   ├── dim_medications.sql
+│       │   ├── patient_phones.sql
+│       │   ├── patient_doctors.sql
+│       │   ├── patient_diagnoses.sql
+│       │   ├── patient_medications.sql
+│       │   └── fact_visits.sql
+│       └── gold/
+│           └── obt_hospital_analytics.sql
+├── power_bi/
+│   └── obt_hospital_analytics.csv     # Gold OBT export for Power BI
+└── README.md
+```
 
-### 3. `dim_courses`
-| course_id | course_name |
-| :--- | :--- |
-| C01 | Java |
-| C02 | DBMS |
-| C03 | Networks |
+## 🚀 How to Run
 
-### 4. `dim_instructors`
-| instructor_id | instructor_name | instructor_dept |
-| :--- | :--- | :--- |
-| I10 | Anil Kumar | Computer Science |
-| I11 | Sneha Rao | Information Tech |
-| I12 | Vikram Das | Computer Science |
+### Prerequisites
+- Python 3.9+
+- pip
 
-### 5. `fact_enrollments`
-| student_id | course_id | grade |
-| :--- | :--- | :--- |
-| S01 | C01 | A |
-| S01 | C02 | B |
-| S02 | C01 | A |
-| S03 | C02 | C |
-| S03 | C03 | B |
-
----
-
-## 🚀 Execution Instructions
-
+### Setup & Execute
 ```bash
-# 1. Activate Virtual Environment
+# 1. Create virtual environment
+python3 -m venv venv
 source venv/bin/activate
 
-# 2. Run DBT Pipeline
-cd dbt_project
-dbt run
+# 2. Install dependencies
+pip install dbt-core dbt-duckdb
 
-# 3. Execute Data Quality Tests
-dbt test
+# 3. Run the pipeline
+cd dbt_project
+dbt debug          # Verify connection
+dbt run            # Build all 12 models
+dbt test           # Run 18 data quality tests
+dbt docs generate  # Generate documentation
+dbt docs serve     # View interactive lineage graph
 ```
 
----
+### Expected Output
+```
+dbt run:   PASS=12  WARN=0  ERROR=0  TOTAL=12
+dbt test:  PASS=18  WARN=0  ERROR=0  TOTAL=18
+```
 
-## 📦 Deliverables Checklist
-- [x] **DBT Project (ZIP):** `student_dbt_3nf_data_pipeline.zip`
-- [x] **Data Warehouse Screenshots/Outputs:** `screenshots/data_warehouse_tables.txt`
-- [x] **Power BI Dataset:** `power_bi/obt_student_analytics.csv`
-- [x] **Power BI Setup Guide:** `power_bi/power_bi_setup_guide.md`
+## 🧪 Data Quality Tests (18 Tests)
+
+| Table | Test | Type |
+|-------|------|------|
+| dim_patients | patient_id | unique, not_null |
+| dim_doctors | doctor_id | unique, not_null |
+| dim_departments | department_id | unique, not_null |
+| dim_diagnoses | diagnosis_code | unique, not_null |
+| dim_medications | medication_id | unique, not_null |
+| fact_visits | patient_id, visit_date | not_null |
+| patient_doctors | patient_id, doctor_id | not_null |
+| patient_diagnoses | patient_id, diagnosis_code | not_null |
+| patient_medications | patient_id, medication_id | not_null |
+
+## 📊 ER Diagram (3NF)
+
+```
+                    ┌─────────────────┐
+                    │  dim_departments │
+                    ├─────────────────┤
+                    │ PK department_id │
+                    │    dept_name     │
+                    └────────▲────────┘
+                             │ FK
+                    ┌────────┴────────┐
+                    │   dim_doctors    │
+                    ├─────────────────┤
+                    │ PK doctor_id     │
+                    │    doctor_name   │
+                    │    specialization│
+                    │ FK department_id │
+                    └────────▲────────┘
+                             │
+              ┌──────────────┤
+              │              │
+    ┌─────────┴──────┐  ┌───┴──────────────┐
+    │patient_doctors │  │  dim_patients     │
+    ├────────────────┤  ├──────────────────┤
+    │FK patient_id   │  │PK patient_id     │
+    │FK doctor_id    │  │   patient_name   │
+    └────────────────┘  │   patient_dob    │
+                        │   patient_gender │
+                        └──┬───┬───┬──────┘
+                           │   │   │
+           ┌───────────────┘   │   └──────────────┐
+           │                   │                   │
+    ┌──────┴─────────┐  ┌─────┴──────────┐  ┌────┴───────────────┐
+    │patient_phones  │  │patient_diagnoses│  │patient_medications │
+    ├────────────────┤  ├────────────────┤  ├────────────────────┤
+    │FK patient_id   │  │FK patient_id   │  │FK patient_id       │
+    │   phone_number │  │FK diagnosis_code│  │FK medication_id    │
+    └────────────────┘  └──────┬─────────┘  │   dosage           │
+                               │            └───────┬────────────┘
+                        ┌──────┴─────────┐         │
+                        │ dim_diagnoses  │   ┌─────┴──────────┐
+                        ├────────────────┤   │dim_medications │
+                        │PK diagnosis_code│   ├────────────────┤
+                        │  description   │   │PK medication_id │
+                        └────────────────┘   │  medication_name│
+                                             └────────────────┘
+
+    ┌───────────────────┐
+    │   fact_visits      │
+    ├───────────────────┤
+    │ FK patient_id      │
+    │    visit_date      │
+    │    visit_type      │
+    │    billing_amount  │
+    └───────────────────┘
+```
+
+## 🛠️ Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Transformation | DBT (Data Build Tool) |
+| Data Warehouse | DuckDB (in-process OLAP) |
+| Source Data | CSV (Flat File) |
+| Testing | DBT Tests (Unique + Not Null) |
+| Analytics Export | CSV → Power BI |
+| Architecture | Medallion (Bronze → Silver → Gold) |
+
+## 📝 Key Concepts Demonstrated
+
+1. **Database Normalization (1NF → 2NF → 3NF)** — Systematic decomposition of flat data
+2. **Medallion Architecture** — Bronze (raw) → Silver (cleaned/normalized) → Gold (analytics-ready)
+3. **DBT Transformations** — SQL-based data transformations with dependency management
+4. **Data Quality Testing** — Automated uniqueness and null checks on all primary/foreign keys
+5. **Many-to-Many Relationships** — Junction tables for patients ↔ doctors, diagnoses, medications
+6. **One Big Table (OBT)** — Gold layer denormalized table optimized for BI consumption
+7. **DuckDB as Local DW** — Lightweight, embedded OLAP engine (no server needed)
+
+## 📜 License
+
+This project is for educational/interview demonstration purposes.

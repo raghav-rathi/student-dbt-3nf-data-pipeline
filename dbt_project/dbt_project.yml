@@ -1,8 +1,8 @@
-name: 'student_dbt_3nf_pipeline'
+name: 'hospital_3nf_pipeline'
 version: '1.0.0'
 config-version: 2
 
-profile: 'student_dbt_3nf_pipeline'
+profile: 'hospital_3nf_pipeline'
 
 model-paths: ["models"]
 analysis-paths: ["analyses"]
@@ -16,7 +16,7 @@ clean-targets:
   - "dbt_packages"
 
 models:
-  student_dbt_3nf_pipeline:
+  hospital_3nf_pipeline:
     bronze:
       +materialized: table
       +schema: bronze

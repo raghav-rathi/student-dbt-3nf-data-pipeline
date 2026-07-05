@@ -1,6 +1,0 @@
-student_id,student_name,course_id,course_name,instructor_id,instructor_name,instructor_dept,grade
-S01,Rahul Sharma,C02,DBMS,I11,Sneha Rao,Information Tech,B
-S02,Priya Mehta,C01,Java,I10,Anil Kumar,Computer Science,A
-S03,Amit Verma,C03,Networks,I12,Vikram Das,Computer Science,B
-S01,Rahul Sharma,C01,Java,I10,Anil Kumar,Computer Science,A
-S03,Amit Verma,C02,DBMS,I11,Sneha Rao,Information Tech,C
