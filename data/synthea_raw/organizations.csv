@@ -1,0 +1,8 @@
+id,name,address,city,state,zip,phone,revenue
+ORG-100,Massachusetts General Hospital,100 Main St,Boston,MA,02110,617-555-0100,17788535.97
+ORG-101,Brigham and Women's Hospital,105 Main St,Boston,MA,02111,617-555-0101,5500215.1
+ORG-102,Beth Israel Deaconess Medical Center,110 Main St,Boston,MA,02112,617-555-0102,10500586.37
+ORG-103,Boston Medical Center,115 Main St,Boston,MA,02113,617-555-0103,9464214.76
+ORG-104,Tufts Medical Center,120 Main St,Boston,MA,02114,617-555-0104,19729424.28
+ORG-105,Cambridge Health Alliance,125 Main St,Boston,MA,02115,617-555-0105,18533989.75
+ORG-106,St. Elizabeth's Medical Center,130 Main St,Boston,MA,02116,617-555-0106,22843591.35

@@ -1,9 +1,19 @@
 {{ config(materialized='table') }}
 
 SELECT DISTINCT
-    TRIM(patient_id) AS patient_id,
-    TRIM(patient_name) AS patient_name,
-    CAST(patient_dob AS DATE) AS patient_dob,
-    TRIM(patient_gender) AS patient_gender
-FROM {{ ref('bronze_raw_hospital') }}
+    patient_id,
+    first_name,
+    last_name,
+    gender,
+    birth_date,
+    death_date,
+    ssn,
+    race,
+    ethnicity,
+    address,
+    city,
+    state,
+    zip,
+    insurance_provider
+FROM {{ ref('stg_patients') }}
 WHERE patient_id IS NOT NULL

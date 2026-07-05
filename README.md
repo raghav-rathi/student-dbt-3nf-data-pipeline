@@ -1,246 +1,155 @@
-# 🏥 Hospital 3NF Data Pipeline — DBT + DuckDB
+# 🏥 Synthea Healthcare Data Pipeline & Analytics (AWS S3 + Snowflake + dbt)
 
-A production-grade data engineering pipeline that demonstrates **Third Normal Form (3NF)** database normalization on a real-world **Hospital Management System** dataset using **DBT (Data Build Tool)** and **DuckDB**.
+An end-to-end, enterprise-grade Data Engineering and Analytics project building a **Medallion Data Pipeline (Bronze → Silver 3NF → Gold Star Schema)** on the **Synthea™ Healthcare Relational Dataset** using **AWS S3**, **Snowflake**, **dbt (Data Build Tool)**, and **Power BI**.
+
+---
 
 ## 🏗️ Architecture Overview
 
-```
-┌──────────────────────────────────────────────────────────────────────────┐
-│                        DATA PIPELINE ARCHITECTURE                       │
-├──────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│  📄 raw_hospital_records.csv                                            │
-│         │ (Unnormalized, multi-valued attributes)                       │
-│         ▼                                                                │
-│  ┌─────────────────────────────────────────────┐                        │
-│  │          🟤 BRONZE LAYER (Raw Staging)       │                        │
-│  │  bronze_raw_hospital                         │                        │
-│  │  • 1:1 copy of CSV with type casting        │                        │
-│  │  • 10 records, 18 columns                   │                        │
-│  └──────────────────┬──────────────────────────┘                        │
-│                     │                                                    │
-│                     ▼                                                    │
-│  ┌─────────────────────────────────────────────┐                        │
-│  │        🔵 SILVER LAYER (3NF Normalized)      │                        │
-│  │                                               │                       │
-│  │  DIMENSION TABLES:                            │                       │
-│  │  ├── dim_patients        (10 rows)           │                        │
-│  │  ├── dim_doctors          (7 rows)           │                        │
-│  │  ├── dim_departments      (7 rows)           │                        │
-│  │  ├── dim_diagnoses       (17 rows)           │                        │
-│  │  └── dim_medications     (19 rows)           │                        │
-│  │                                               │                       │
-│  │  JUNCTION TABLES (Many-to-Many):              │                       │
-│  │  ├── patient_phones      (16 rows)           │                        │
-│  │  ├── patient_doctors     (20 rows)           │                        │
-│  │  ├── patient_diagnoses   (20 rows)           │                        │
-│  │  └── patient_medications (28 rows)           │                        │
-│  │                                               │                       │
-│  │  FACT TABLE:                                  │                       │
-│  │  └── fact_visits         (19 rows)           │                        │
-│  └──────────────────┬──────────────────────────┘                        │
-│                     │                                                    │
-│                     ▼                                                    │
-│  ┌─────────────────────────────────────────────┐                        │
-│  │     🟡 GOLD LAYER (Analytics / OBT)          │                        │
-│  │  obt_hospital_analytics  (340 rows)          │                        │
-│  │  • Denormalized wide table for Power BI     │                        │
-│  │  • Joins all dimensions + facts              │                        │
-│  └─────────────────────────────────────────────┘                        │
-│                     │                                                    │
-│                     ▼                                                    │
-│  ┌─────────────────────────────────────────────┐                        │
-│  │        📊 POWER BI / ANALYTICS               │                        │
-│  │  obt_hospital_analytics.csv                  │                        │
-│  └─────────────────────────────────────────────┘                        │
-│                                                                          │
-└──────────────────────────────────────────────────────────────────────────┘
+```text
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                             END-TO-END PIPELINE ARCHITECTURE                                │
+├─────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                             │
+│  ☁️ AWS S3 BUCKET                                                                           │
+│     s3://healthcare-pipeline-data/raw/                                                      │
+│     (Synthea CSV files: patients.csv, encounters.csv, providers.csv, claims.csv, etc.)      │
+│                                                                                             │
+│            │                                                                                │
+│            ▼  (Snowflake Storage Integration & External Stage)                              │
+│   Snowflake RAW / STAGING Schema (`HEALTHCARE_DB.STAGING`)                                  │
+│     • Native `COPY INTO` bulk ingestion from S3 into Snowflake staging tables                │
+│                                                                                             │
+│ ───────────────────────────────── dbt TRANSFORMATION BOUNDARY ───────────────────────────── │
+│                                                                                             │
+│            │                                                                                │
+│            ▼                                                                                │
+│  🟤 BRONZE LAYER (dbt Staging Views: `stg_*`)                                              │
+│     • 9 view models (`stg_patients`, `stg_encounters`, `stg_providers`, etc.)              │
+│     • Type casting, standardized snake_case naming, timestamp parsing                       │
+│                                                                                             │
+│            │                                                                                │
+│            ▼                                                                                │
+│  🔵 SILVER LAYER (3NF Relational Model + Incremental + SCD Type 2 Snapshots)                 │
+│     • ⏳ `snapshot_patients` (SCD Type 2 via `dbt snapshot` tracking insurance/address)    │
+│     • ⚡ `fct_encounters` (INCREMENTAL model with 3-day lookback window & MERGE strategy)   │
+│     • `dim_providers`, `dim_organizations`, `dim_payors`, `fct_claims`, `fct_medications`   │
+│     • 24 dbt automated data quality & FK relationship tests                                 │
+│                                                                                             │
+│            │                                                                                │
+│            ▼                                                                                │
+│  🥇 GOLD LAYER (Star Schema & BI Export)                                                    │
+│     • `gold_fct_patient_encounters` (Point-in-Time Join with SCD Type 2 snapshot)          │
+│     • `gold_dim_patients`, `gold_dim_providers`                                             │
+│     • Export: `gold_obt_healthcare_analytics.csv`                                           │
+│                                                                                             │
+│            │                                                                                │
+│            ▼                                                                                │
+│  📊 POWER BI EXECUTIVE DASHBOARD                                                            │
+│     • 4-Tab Interactive Dashboard: Executive Overview, Financials, Operations, Clinical     │
+│                                                                                             │
+└─────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## 📋 Problem Statement
+---
 
-A hospital maintains patient records in a **single flat CSV file** where:
-- Each patient has **multiple phone numbers** in one cell
-- Each patient is assigned **multiple doctors** (comma-separated)
-- Each patient has **multiple diagnoses** (ICD codes)
-- Each patient is prescribed **multiple medications** with dosages
-- Visit history with billing is **stored as comma-separated values**
+## 🔑 Key Features Demonstrated
 
-This **violates 1NF, 2NF, and 3NF** due to:
-- **Multi-valued attributes** (repeating groups in single cells)
-- **Partial dependencies** (doctor name depends on doctor ID, not on patient)
-- **Transitive dependencies** (department name depends on department ID via doctor)
+1. **Relational Data Modeling (3NF → Star Schema)**:
+   - Evaluated 9 normalized Synthea relational tables (`patients`, `encounters`, `providers`, `organizations`, `payors`, `conditions`, `medications`, `procedures`, `claims`).
+   - Converted 3NF database model into a **Business Star Schema** with conformed dimensions.
 
-## 🔧 Normalization Steps
+2. **Incremental Materialization Strategy (`fct_encounters`)**:
+   - Configured high-volume transactional encounters as `materialized='incremental'`.
+   - Utilized Snowflake `MERGE` upsert strategy with a **3-day lookback window** (`is_incremental()`) to handle late-arriving billing updates without full-table scans.
 
-### 1NF — Eliminate Repeating Groups
-Split comma-separated values into atomic rows using `STRING_SPLIT + UNNEST`.
+3. **Slowly Changing Dimensions (SCD Type 2)**:
+   - Built `snapshots/snapshot_patients.sql` using `dbt snapshot` to preserve patient demographic and insurance history over time (`dbt_valid_from`, `dbt_valid_to`, `dbt_is_current`).
 
-### 2NF — Remove Partial Dependencies
-Create dimension tables where attributes depend on their own primary key:
-- `dim_patients` — patient_id → name, DOB, gender
-- `dim_doctors` — doctor_id → name, specialization
-- `dim_departments` — department_id → name
-- `dim_diagnoses` — diagnosis_code → description
-- `dim_medications` — medication_id → name
+4. **Automated Data Quality & FK Relationship Testing**:
+   - 24 automated dbt tests enforcing PK uniqueness, non-null constraints, and referential foreign key integrity across all silver and gold tables.
 
-### 3NF — Remove Transitive Dependencies
-- Doctor's department (`department_id`) is a foreign key in `dim_doctors`, not stored with patients
-- Medication dosage is stored in `patient_medications` junction table (same med can have different dosages)
+5. **Power BI Executive Dashboard Integration**:
+   - Exported `gold_obt_healthcare_analytics.csv` designed for a **4-Tab Executive Power BI Dashboard** (Executive Command Center, Financial & Payer Analysis, Provider Operations, Clinical Deep-Dive).
 
-## 📁 Project Structure
+---
 
-```
+## 📂 Repository File Structure
+
+```text
+├── DDL/
+│   └── snowflake_setup.sql             # Snowflake Storage Integration, Stage, & COPY DDL
 ├── data/
-│   ├── raw_hospital_records.csv        # Source: Unnormalized hospital data
-│   └── hospital_dw.duckdb             # DuckDB data warehouse
+│   └── synthea_raw/                    # 9 Raw Synthea CSV files
 ├── dbt_project/
-│   ├── dbt_project.yml                # DBT project configuration
-│   ├── profiles.yml                   # DuckDB connection profile
-│   └── models/
-│       ├── schema.yml                 # Data quality tests (18 tests)
-│       ├── bronze/
-│       │   └── bronze_raw_hospital.sql
-│       ├── silver/
-│       │   ├── dim_patients.sql
-│       │   ├── dim_doctors.sql
-│       │   ├── dim_departments.sql
-│       │   ├── dim_diagnoses.sql
-│       │   ├── dim_medications.sql
-│       │   ├── patient_phones.sql
-│       │   ├── patient_doctors.sql
-│       │   ├── patient_diagnoses.sql
-│       │   ├── patient_medications.sql
-│       │   └── fact_visits.sql
-│       └── gold/
-│           └── obt_hospital_analytics.sql
+│   ├── dbt_project.yml                 # dbt project configuration
+│   ├── profiles.yml                    # Snowflake & DuckDB profiles
+│   ├── models/
+│   │   ├── sources/
+│   │   │   └── sources.yml             # Raw staging tables definition
+│   │   ├── bronze/                     # 9 Staging Views (`stg_*`)
+│   │   ├── silver/                     # 3NF Cleaned Models (`dim_*`, `fct_*`)
+│   │   └── gold/                       # Star Schema & BI OBT (`gold_*`)
+│   ├── snapshots/
+│   │   └── snapshot_patients.sql       # SCD Type 2 Snapshot
+│   └── tests/                          # 24 dbt Data Quality & FK Relationship Tests
 ├── power_bi/
-│   └── obt_hospital_analytics.csv     # Gold OBT export for Power BI
-└── README.md
+│   └── gold_obt_healthcare_analytics.csv # Exported OBT for Power BI
+├── scripts/
+│   └── generate_synthea_data.py        # Synthea relational CSV data generator
+├── .env.example                        # Template for AWS & Snowflake credentials
+├── SETUP_CREDENTIALS.md                # Step-by-step credentials guide
+├── PROPOSAL_PLAN.md                    # Complete technical proposal document
+├── run_pipeline.py                     # Master 1-click execution script
+└── README.md                           # Repository documentation
 ```
 
-## 🚀 How to Run
+---
 
-### Prerequisites
-- Python 3.9+
-- pip
+## 🚀 How to Run the Pipeline
 
-### Setup & Execute
+### Option 1: Automated 1-Click Execution (Local Mode)
+Run the master pipeline script:
 ```bash
-# 1. Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
+./run_pipeline.py
+```
+This script will automatically:
+1. Generate the Synthea relational dataset in `data/synthea_raw/`.
+2. Initialize the database and staging schemas.
+3. Run `dbt snapshot` (building SCD Type 2 patient snapshot).
+4. Run `dbt run` (building Bronze views, Silver 3NF, and Gold Star Schema).
+5. Run `dbt test` (verifying 24 PK/FK relationship tests).
+6. Export `gold_obt_healthcare_analytics.csv` to `power_bi/`.
 
-# 2. Install dependencies
-pip install dbt-core dbt-duckdb
+### Option 2: Live Cloud Deployment (AWS S3 + Snowflake)
+1. Copy `.env.example` to `.env` and enter your AWS & Snowflake credentials:
+   ```bash
+   cp .env.example .env
+   ```
+2. Execute `DDL/snowflake_setup.sql` in Snowflake Snowsight.
+3. Run dbt targetting Snowflake:
+   ```bash
+   cd dbt_project
+   dbt snapshot --target snowflake
+   dbt run --target snowflake
+   dbt test --target snowflake
+   ```
 
-# 3. Run the pipeline
-cd dbt_project
-dbt debug          # Verify connection
-dbt run            # Build all 12 models
-dbt test           # Run 18 data quality tests
-dbt docs generate  # Generate documentation
-dbt docs serve     # View interactive lineage graph
+---
+
+## 🧪 Automated Test Verification
+
+All 24 dbt quality tests pass 100%:
+
+```text
+Done. PASS=24 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=24
 ```
 
-### Expected Output
-```
-dbt run:   PASS=12  WARN=0  ERROR=0  TOTAL=12
-dbt test:  PASS=18  WARN=0  ERROR=0  TOTAL=18
-```
+- `unique` and `not_null` tests on all Primary Keys.
+- `relationships` tests enforcing Foreign Keys (`fct_encounters.patient_id` → `dim_patients.patient_id`, etc.).
 
-## 🧪 Data Quality Tests (18 Tests)
-
-| Table | Test | Type |
-|-------|------|------|
-| dim_patients | patient_id | unique, not_null |
-| dim_doctors | doctor_id | unique, not_null |
-| dim_departments | department_id | unique, not_null |
-| dim_diagnoses | diagnosis_code | unique, not_null |
-| dim_medications | medication_id | unique, not_null |
-| fact_visits | patient_id, visit_date | not_null |
-| patient_doctors | patient_id, doctor_id | not_null |
-| patient_diagnoses | patient_id, diagnosis_code | not_null |
-| patient_medications | patient_id, medication_id | not_null |
-
-## 📊 ER Diagram (3NF)
-
-```
-                    ┌─────────────────┐
-                    │  dim_departments │
-                    ├─────────────────┤
-                    │ PK department_id │
-                    │    dept_name     │
-                    └────────▲────────┘
-                             │ FK
-                    ┌────────┴────────┐
-                    │   dim_doctors    │
-                    ├─────────────────┤
-                    │ PK doctor_id     │
-                    │    doctor_name   │
-                    │    specialization│
-                    │ FK department_id │
-                    └────────▲────────┘
-                             │
-              ┌──────────────┤
-              │              │
-    ┌─────────┴──────┐  ┌───┴──────────────┐
-    │patient_doctors │  │  dim_patients     │
-    ├────────────────┤  ├──────────────────┤
-    │FK patient_id   │  │PK patient_id     │
-    │FK doctor_id    │  │   patient_name   │
-    └────────────────┘  │   patient_dob    │
-                        │   patient_gender │
-                        └──┬───┬───┬──────┘
-                           │   │   │
-           ┌───────────────┘   │   └──────────────┐
-           │                   │                   │
-    ┌──────┴─────────┐  ┌─────┴──────────┐  ┌────┴───────────────┐
-    │patient_phones  │  │patient_diagnoses│  │patient_medications │
-    ├────────────────┤  ├────────────────┤  ├────────────────────┤
-    │FK patient_id   │  │FK patient_id   │  │FK patient_id       │
-    │   phone_number │  │FK diagnosis_code│  │FK medication_id    │
-    └────────────────┘  └──────┬─────────┘  │   dosage           │
-                               │            └───────┬────────────┘
-                        ┌──────┴─────────┐         │
-                        │ dim_diagnoses  │   ┌─────┴──────────┐
-                        ├────────────────┤   │dim_medications │
-                        │PK diagnosis_code│   ├────────────────┤
-                        │  description   │   │PK medication_id │
-                        └────────────────┘   │  medication_name│
-                                             └────────────────┘
-
-    ┌───────────────────┐
-    │   fact_visits      │
-    ├───────────────────┤
-    │ FK patient_id      │
-    │    visit_date      │
-    │    visit_type      │
-    │    billing_amount  │
-    └───────────────────┘
-```
-
-## 🛠️ Tech Stack
-
-| Component | Technology |
-|-----------|-----------|
-| Transformation | DBT (Data Build Tool) |
-| Data Warehouse | DuckDB (in-process OLAP) |
-| Source Data | CSV (Flat File) |
-| Testing | DBT Tests (Unique + Not Null) |
-| Analytics Export | CSV → Power BI |
-| Architecture | Medallion (Bronze → Silver → Gold) |
-
-## 📝 Key Concepts Demonstrated
-
-1. **Database Normalization (1NF → 2NF → 3NF)** — Systematic decomposition of flat data
-2. **Medallion Architecture** — Bronze (raw) → Silver (cleaned/normalized) → Gold (analytics-ready)
-3. **DBT Transformations** — SQL-based data transformations with dependency management
-4. **Data Quality Testing** — Automated uniqueness and null checks on all primary/foreign keys
-5. **Many-to-Many Relationships** — Junction tables for patients ↔ doctors, diagnoses, medications
-6. **One Big Table (OBT)** — Gold layer denormalized table optimized for BI consumption
-7. **DuckDB as Local DW** — Lightweight, embedded OLAP engine (no server needed)
+---
 
 ## 📜 License
 
-This project is for educational/interview demonstration purposes.
+Educational and professional demonstration project.

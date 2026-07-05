@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: staging
+    schema: main_staging
+    tables:
+      - name: raw_patients
+      - name: raw_encounters
+      - name: raw_providers
+      - name: raw_organizations
+      - name: raw_payors
+      - name: raw_conditions
+      - name: raw_medications
+      - name: raw_procedures
+      - name: raw_claims

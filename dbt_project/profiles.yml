@@ -3,6 +3,17 @@ hospital_3nf_pipeline:
   outputs:
     dev:
       type: duckdb
-      path: '../data/hospital_dw.duckdb'
+      path: '../data/healthcare_dw.duckdb'
       extensions:
         - parquet
+
+    snowflake:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'demo_account') }}"
+      user: "{{ env_var('SNOWFLAKE_USER', 'demo_user') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD', 'demo_pass') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'ACCOUNTADMIN') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'HEALTHCARE_DB') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'COMPUTE_WH') }}"
+      schema: STAGING
+      threads: 4

@@ -1,0 +1,8 @@
+id,name,address,city,state,zip,phone
+PAYOR-200,Medicare,200 Commercial St,Boston,MA,02120,800-555-0200
+PAYOR-201,Medicaid,203 Commercial St,Boston,MA,02121,800-555-0201
+PAYOR-202,Blue Cross Blue Shield,206 Commercial St,Boston,MA,02122,800-555-0202
+PAYOR-203,Aetna,209 Commercial St,Boston,MA,02123,800-555-0203
+PAYOR-204,UnitedHealthcare,212 Commercial St,Boston,MA,02124,800-555-0204
+PAYOR-205,Cigna,215 Commercial St,Boston,MA,02125,800-555-0205
+PAYOR-206,Humana,218 Commercial St,Boston,MA,02126,800-555-0206

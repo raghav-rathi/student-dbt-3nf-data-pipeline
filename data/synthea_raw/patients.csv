@@ -1,0 +1,51 @@
+id,birthdate,deathdate,ssn,first,last,gender,race,ethnicity,address,city,state,zip,insurance_provider,updated_at
+PAT-1000,1970-01-08,,941-14-6168,Michael,Jones,M,Black,Non-Hispanic,936 Beacon St,Boston,MA,02115,UnitedHealthcare,2026-06-06 00:57:10
+PAT-1001,1995-06-07,,771-73-7482,Linda,Williams,F,Black,Non-Hispanic,253 Beacon St,Boston,MA,02115,Cigna,2026-06-17 00:57:10
+PAT-1002,1984-05-24,,698-64-7543,Jennifer,Brown,M,Hispanic,Non-Hispanic,94 Beacon St,Boston,MA,02115,Humana,2026-07-03 00:57:10
+PAT-1003,2005-02-05,,742-30-7916,Elizabeth,Johnson,F,Hispanic,Non-Hispanic,611 Beacon St,Boston,MA,02115,Aetna,2026-06-18 00:57:10
+PAT-1004,1966-09-28,,111-97-2876,William,Jones,F,White,Non-Hispanic,301 Beacon St,Boston,MA,02115,Aetna,2026-06-29 00:57:10
+PAT-1005,1979-01-24,,996-43-9201,John,Rodriguez,M,Asian,Non-Hispanic,862 Beacon St,Boston,MA,02115,Cigna,2026-06-18 00:57:10
+PAT-1006,1988-04-05,,482-30-9837,William,Smith,F,Hispanic,Non-Hispanic,20 Beacon St,Boston,MA,02115,Medicare,2026-06-05 00:57:10
+PAT-1007,1973-05-08,,159-40-2290,Mary,Davis,M,Black,Non-Hispanic,132 Beacon St,Boston,MA,02115,Cigna,2026-06-19 00:57:10
+PAT-1008,2010-09-06,,371-77-7932,Patricia,Rodriguez,M,Asian,Non-Hispanic,409 Beacon St,Boston,MA,02115,Cigna,2026-06-14 00:57:10
+PAT-1009,1973-08-17,,562-25-5061,Patricia,Johnson,F,White,Non-Hispanic,603 Beacon St,Boston,MA,02115,UnitedHealthcare,2026-06-27 00:57:10
+PAT-1010,1987-04-01,,172-90-1964,Patricia,Johnson,M,Asian,Non-Hispanic,73 Beacon St,Boston,MA,02115,UnitedHealthcare,2026-06-27 00:57:10
+PAT-1011,1967-11-16,,319-79-3167,Elizabeth,Martinez,F,Black,Non-Hispanic,804 Beacon St,Boston,MA,02115,Aetna,2026-06-09 00:57:10
+PAT-1012,1976-04-04,,199-94-8062,Jennifer,Miller,F,Hispanic,Non-Hispanic,885 Beacon St,Boston,MA,02115,Cigna,2026-07-03 00:57:10
+PAT-1013,1993-11-21,,200-17-7596,Jennifer,Johnson,M,Black,Non-Hispanic,195 Beacon St,Boston,MA,02115,UnitedHealthcare,2026-06-20 00:57:10
+PAT-1014,1958-07-06,,385-69-5092,Mary,Davis,M,White,Non-Hispanic,668 Beacon St,Boston,MA,02115,UnitedHealthcare,2026-06-08 00:57:10
+PAT-1015,1950-02-25,,969-40-3724,Michael,Davis,F,Black,Non-Hispanic,886 Beacon St,Boston,MA,02115,Aetna,2026-06-06 00:57:10
+PAT-1016,1953-03-13,,102-59-5345,Linda,Jones,F,Hispanic,Non-Hispanic,159 Beacon St,Boston,MA,02115,Medicaid,2026-06-25 00:57:10
+PAT-1017,1963-01-19,,853-79-1998,Jennifer,Smith,M,Hispanic,Non-Hispanic,515 Beacon St,Boston,MA,02115,Humana,2026-06-18 00:57:10
+PAT-1018,1960-01-17,,182-33-2122,Elizabeth,Johnson,M,Hispanic,Non-Hispanic,123 Beacon St,Boston,MA,02115,UnitedHealthcare,2026-06-27 00:57:10
+PAT-1019,1987-10-02,,734-20-7868,Elizabeth,Martinez,F,Asian,Non-Hispanic,210 Beacon St,Boston,MA,02115,Cigna,2026-06-12 00:57:10
+PAT-1020,1970-04-09,,505-26-5915,Linda,Garcia,M,White,Non-Hispanic,470 Beacon St,Boston,MA,02115,UnitedHealthcare,2026-06-16 00:57:10
+PAT-1021,1956-02-18,,318-74-5345,John,Garcia,M,Black,Non-Hispanic,379 Beacon St,Boston,MA,02115,Blue Cross Blue Shield,2026-06-29 00:57:10
+PAT-1022,1978-09-23,,409-88-9666,James,Rodriguez,F,White,Non-Hispanic,962 Beacon St,Boston,MA,02115,Medicaid,2026-06-26 00:57:10
+PAT-1023,1957-02-24,,666-29-5462,Robert,Martinez,M,Asian,Non-Hispanic,209 Beacon St,Boston,MA,02115,Cigna,2026-06-14 00:57:10
+PAT-1024,2004-05-17,,600-42-1832,Mary,Miller,F,White,Non-Hispanic,4 Beacon St,Boston,MA,02115,Blue Cross Blue Shield,2026-06-10 00:57:10
+PAT-1025,1958-11-09,,265-66-8007,William,Smith,M,White,Non-Hispanic,968 Beacon St,Boston,MA,02115,Cigna,2026-06-06 00:57:10
+PAT-1026,1959-09-02,,954-57-3426,Michael,Williams,M,Asian,Non-Hispanic,374 Beacon St,Boston,MA,02115,Humana,2026-06-07 00:57:10
+PAT-1027,1952-06-07,,798-41-2684,Jennifer,Rodriguez,F,Black,Non-Hispanic,948 Beacon St,Boston,MA,02115,Medicaid,2026-06-07 00:57:10
+PAT-1028,1960-03-14,,125-32-6442,Michael,Brown,F,Black,Non-Hispanic,807 Beacon St,Boston,MA,02115,Cigna,2026-07-01 00:57:10
+PAT-1029,1974-01-28,,581-38-4269,Linda,Garcia,F,Black,Non-Hispanic,229 Beacon St,Boston,MA,02115,Medicare,2026-06-13 00:57:10
+PAT-1030,1962-07-11,,385-18-5573,Jennifer,Rodriguez,F,Asian,Non-Hispanic,962 Beacon St,Boston,MA,02115,Medicare,2026-07-01 00:57:10
+PAT-1031,2006-05-06,,694-43-1626,Mary,Martinez,F,Asian,Non-Hispanic,747 Beacon St,Boston,MA,02115,Humana,2026-06-24 00:57:10
+PAT-1032,1977-10-17,,218-59-4114,Robert,Smith,F,White,Non-Hispanic,533 Beacon St,Boston,MA,02115,Humana,2026-06-17 00:57:10
+PAT-1033,1993-12-24,,854-95-4228,Jennifer,Miller,M,Asian,Non-Hispanic,639 Beacon St,Boston,MA,02115,Blue Cross Blue Shield,2026-06-13 00:57:10
+PAT-1034,2004-02-24,,407-74-6067,Michael,Garcia,F,Asian,Non-Hispanic,568 Beacon St,Boston,MA,02115,Medicaid,2026-06-28 00:57:10
+PAT-1035,1976-11-13,,793-32-5930,Michael,Rodriguez,M,Asian,Non-Hispanic,294 Beacon St,Boston,MA,02115,Medicaid,2026-06-21 00:57:10
+PAT-1036,2000-10-20,,770-51-8618,Linda,Davis,M,Hispanic,Non-Hispanic,813 Beacon St,Boston,MA,02115,Humana,2026-06-11 00:57:10
+PAT-1037,1960-11-03,,390-75-6491,Mary,Brown,F,Black,Non-Hispanic,826 Beacon St,Boston,MA,02115,Medicaid,2026-06-30 00:57:10
+PAT-1038,1951-01-08,,586-88-2193,Linda,Miller,M,Hispanic,Non-Hispanic,507 Beacon St,Boston,MA,02115,Aetna,2026-06-27 00:57:10
+PAT-1039,1959-11-23,,105-23-7965,Patricia,Williams,F,White,Non-Hispanic,571 Beacon St,Boston,MA,02115,Medicaid,2026-06-05 00:57:10
+PAT-1040,2004-02-15,,236-69-9702,William,Martinez,F,Hispanic,Non-Hispanic,628 Beacon St,Boston,MA,02115,Humana,2026-06-11 00:57:10
+PAT-1041,2007-09-14,,950-80-8305,John,Davis,F,Asian,Non-Hispanic,770 Beacon St,Boston,MA,02115,Medicaid,2026-06-08 00:57:10
+PAT-1042,1990-05-25,,896-76-8939,Patricia,Jones,F,White,Non-Hispanic,731 Beacon St,Boston,MA,02115,Blue Cross Blue Shield,2026-06-27 00:57:10
+PAT-1043,1967-06-11,,653-20-3267,John,Brown,F,Black,Non-Hispanic,724 Beacon St,Boston,MA,02115,Medicaid,2026-07-02 00:57:10
+PAT-1044,1976-07-11,,655-69-7812,James,Brown,F,Hispanic,Non-Hispanic,927 Beacon St,Boston,MA,02115,Humana,2026-06-16 00:57:10
+PAT-1045,2010-12-01,,977-83-7232,Linda,Smith,F,Asian,Non-Hispanic,772 Beacon St,Boston,MA,02115,Aetna,2026-06-07 00:57:10
+PAT-1046,2007-07-18,,865-79-4613,Linda,Brown,F,Hispanic,Non-Hispanic,498 Beacon St,Boston,MA,02115,Medicare,2026-06-22 00:57:10
+PAT-1047,1971-11-22,,917-61-3704,Linda,Williams,M,Hispanic,Non-Hispanic,607 Beacon St,Boston,MA,02115,UnitedHealthcare,2026-06-13 00:57:10
+PAT-1048,1951-02-21,,538-27-8564,John,Smith,F,Hispanic,Non-Hispanic,336 Beacon St,Boston,MA,02115,Medicaid,2026-06-20 00:57:10
+PAT-1049,1970-06-25,,488-45-7906,Robert,Johnson,F,White,Non-Hispanic,768 Beacon St,Boston,MA,02115,UnitedHealthcare,2026-07-03 00:57:10

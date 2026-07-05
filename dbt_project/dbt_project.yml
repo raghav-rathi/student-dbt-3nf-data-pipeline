@@ -18,7 +18,7 @@ clean-targets:
 models:
   hospital_3nf_pipeline:
     bronze:
-      +materialized: table
+      +materialized: view
       +schema: bronze
     silver:
       +materialized: table
@@ -26,3 +26,7 @@ models:
     gold:
       +materialized: table
       +schema: gold
+
+snapshots:
+  hospital_3nf_pipeline:
+    +target_schema: snapshots

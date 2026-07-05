@@ -2,81 +2,87 @@ version: 2
 
 models:
   - name: dim_patients
-    description: "Dimension table for patients (3NF)"
+    description: "Silver 3NF Dimension table for Patients"
     columns:
       - name: patient_id
         tests:
           - unique
           - not_null
 
-  - name: dim_doctors
-    description: "Dimension table for doctors (3NF)"
+  - name: dim_providers
+    description: "Silver 3NF Dimension table for Physicians"
     columns:
-      - name: doctor_id
+      - name: provider_id
         tests:
           - unique
           - not_null
 
-  - name: dim_departments
-    description: "Dimension table for hospital departments (3NF)"
+  - name: dim_organizations
+    description: "Silver 3NF Dimension table for Hospital Organizations"
     columns:
-      - name: department_id
+      - name: organization_id
         tests:
           - unique
           - not_null
 
-  - name: dim_diagnoses
-    description: "Dimension table for ICD diagnosis codes (3NF)"
+  - name: dim_payors
+    description: "Silver 3NF Dimension table for Insurance Payors"
     columns:
-      - name: diagnosis_code
+      - name: payor_id
         tests:
           - unique
           - not_null
 
-  - name: dim_medications
-    description: "Dimension table for medications and dosages (3NF)"
+  - name: fct_encounters
+    description: "Silver Fact table for Patient Encounters (Incremental)"
     columns:
-      - name: medication_id
+      - name: encounter_id
         tests:
           - unique
           - not_null
-
-  - name: fact_visits
-    description: "Fact table for patient hospital visits with billing"
-    columns:
       - name: patient_id
         tests:
           - not_null
-      - name: visit_date
+          - relationships:
+              to: ref('dim_patients')
+              field: patient_id
+      - name: provider_id
         tests:
           - not_null
+          - relationships:
+              to: ref('dim_providers')
+              field: provider_id
+      - name: organization_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_organizations')
+              field: organization_id
 
-  - name: patient_doctors
-    description: "Many-to-many junction: patients to doctors"
+  - name: fct_claims
+    description: "Silver Fact table for Medical Claims"
     columns:
+      - name: claim_id
+        tests:
+          - unique
+          - not_null
       - name: patient_id
         tests:
           - not_null
-      - name: doctor_id
-        tests:
-          - not_null
+          - relationships:
+              to: ref('dim_patients')
+              field: patient_id
 
-  - name: patient_diagnoses
-    description: "Many-to-many junction: patients to diagnoses"
+  - name: gold_fct_patient_encounters
+    description: "Gold Star Schema Fact Table"
     columns:
+      - name: encounter_id
+        tests:
+          - unique
+          - not_null
       - name: patient_id
         tests:
           - not_null
-      - name: diagnosis_code
-        tests:
-          - not_null
-
-  - name: patient_medications
-    description: "Many-to-many junction: patients to medications"
-    columns:
-      - name: patient_id
-        tests:
-          - not_null
-      - name: medication_id
+      - name: provider_id
         tests:
           - not_null
