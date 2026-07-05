@@ -21,26 +21,24 @@ def build_dashboard():
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Synthea Healthcare Executive Analytics Dashboard</title>
+  <title>Hospital Operations & Patient Analytics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {{
-      --bg-main: #0f172a;
-      --bg-card: #1e293b;
-      --bg-card-hover: #334155;
-      --accent-blue: #38bdf8;
-      --accent-indigo: #818cf8;
-      --accent-emerald: #34d399;
-      --accent-rose: #f43f5e;
-      --accent-amber: #fbbf24;
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --border-color: rgba(255, 255, 255, 0.08);
-      --font-heading: 'Outfit', sans-serif;
-      --font-body: 'Inter', sans-serif;
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --purple: #8b5cf6;
+      --font-family: 'Inter', system-ui, -apple-system, sans-serif;
     }}
 
     * {{
@@ -51,238 +49,185 @@ def build_dashboard():
 
     body {{
       background-color: var(--bg-main);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      min-height: 100vh;
+      color: var(--text-main);
+      font-family: var(--font-family);
       padding: 24px;
       line-height: 1.5;
     }}
 
-    header {{
+    /* HEADER */
+    .dashboard-header {{
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border-color);
       flex-wrap: wrap;
       gap: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }}
 
-    .header-title h1 {{
-      font-family: var(--font-heading);
-      font-size: 26px;
+    .header-text h1 {{
+      font-size: 22px;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #38bdf8, #818cf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-main);
     }}
 
-    .header-title p {{
+    .header-text p {{
       font-size: 13px;
-      color: var(--text-secondary);
+      color: var(--text-muted);
       margin-top: 2px;
     }}
 
-    .filters {{
+    .controls {{
       display: flex;
       gap: 12px;
+      align-items: center;
       flex-wrap: wrap;
     }}
 
-    .filter-group {{
+    .control-item {{
       display: flex;
       flex-direction: column;
       gap: 4px;
     }}
 
-    .filter-group label {{
+    .control-item label {{
       font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-secondary);
       font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
     }}
 
     select {{
-      background-color: var(--bg-card);
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
+      background-color: #ffffff;
+      color: var(--text-main);
+      border: 1px solid var(--border);
       padding: 8px 12px;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 13px;
-      font-family: var(--font-body);
+      font-family: var(--font-family);
       outline: none;
       cursor: pointer;
-      transition: border-color 0.2s;
     }}
 
-    select:hover {{
-      border-color: var(--accent-blue);
+    select:focus {{
+      border-color: var(--primary);
     }}
 
     .btn-reset {{
-      background: rgba(244, 63, 94, 0.15);
-      color: var(--accent-rose);
-      border: 1px solid rgba(244, 63, 94, 0.3);
-      padding: 8px 16px;
-      border-radius: 8px;
+      background: #f1f5f9;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 6px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
       align-self: flex-end;
-      transition: all 0.2s;
     }}
 
     .btn-reset:hover {{
-      background: rgba(244, 63, 94, 0.25);
+      background: #e2e8f0;
     }}
 
-    /* KPI CARDS */
-    .kpi-grid {{
+    /* KPI METRICS */
+    .kpi-row {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
       gap: 16px;
       margin-bottom: 24px;
     }}
 
-    .kpi-card {{
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 18px 20px;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s, border-color 0.2s;
+    .kpi-box {{
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }}
 
-    .kpi-card:hover {{
-      transform: translateY(-2px);
-      border-color: rgba(255, 255, 255, 0.2);
-    }}
-
-    .kpi-card::before {{
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: var(--card-accent, var(--accent-blue));
-    }}
-
-    .kpi-title {{
+    .kpi-label {{
       font-size: 12px;
       font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      color: var(--text-muted);
     }}
 
-    .kpi-value {{
-      font-family: var(--font-heading);
+    .kpi-val {{
       font-size: 24px;
       font-weight: 700;
-      margin-top: 6px;
-      color: var(--text-primary);
-    }}
-
-    .kpi-subtext {{
-      font-size: 11px;
-      color: var(--accent-emerald);
+      color: var(--text-main);
       margin-top: 4px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
     }}
 
     /* TABS */
-    .nav-tabs {{
+    .tabs-bar {{
       display: flex;
       gap: 8px;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
     }}
 
-    .tab-btn {{
+    .tab-item {{
       background: none;
       border: none;
-      color: var(--text-secondary);
-      padding: 12px 20px;
+      padding: 10px 16px;
       font-size: 14px;
-      font-weight: 600;
-      font-family: var(--font-body);
+      font-weight: 500;
+      font-family: var(--font-family);
+      color: var(--text-muted);
       cursor: pointer;
       border-bottom: 2px solid transparent;
-      transition: all 0.2s;
     }}
 
-    .tab-btn:hover {{
-      color: var(--text-primary);
+    .tab-item.active {{
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 600;
     }}
 
-    .tab-btn.active {{
-      color: var(--accent-blue);
-      border-bottom-color: var(--accent-blue);
-    }}
-
-    .tab-content {{
+    .tab-page {{
       display: none;
     }}
 
-    .tab-content.active {{
+    .tab-page.active {{
       display: block;
     }}
 
-    /* DASHBOARD GRID */
-    .grid-2 {{
+    /* CARDS & CHARTS */
+    .chart-grid-2 {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
       gap: 20px;
       margin-bottom: 20px;
     }}
 
-    .grid-3 {{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-      margin-bottom: 20px;
-    }}
-
-    .chart-card {{
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
+    .card {{
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
       padding: 20px;
-      display: flex;
-      flex-direction: column;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }}
 
-    .chart-header {{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .card-title {{
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
       margin-bottom: 16px;
     }}
 
-    .chart-header h3 {{
-      font-family: var(--font-heading);
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }}
-
-    .chart-container {{
+    .chart-box {{
       position: relative;
-      flex-grow: 1;
-      min-height: 260px;
+      min-height: 250px;
     }}
 
-    /* TABLE */
-    .table-container {{
+    /* TABLES */
+    .table-wrapper {{
       overflow-x: auto;
-      margin-top: 10px;
     }}
 
     table {{
@@ -293,186 +238,127 @@ def build_dashboard():
     }}
 
     th {{
-      background-color: rgba(255, 255, 255, 0.04);
-      color: var(--text-secondary);
+      background-color: #f8fafc;
+      color: var(--text-muted);
       font-weight: 600;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border-color);
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 0.5px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
     }}
 
     td {{
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border-color);
-      color: var(--text-primary);
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
     }}
 
     tr:hover td {{
-      background-color: rgba(255, 255, 255, 0.02);
-    }}
-
-    .badge {{
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }}
-
-    .badge-emergency {{ background: rgba(244, 63, 94, 0.2); color: #f43f5e; }}
-    .badge-inpatient {{ background: rgba(251, 191, 36, 0.2); color: #fbbf24; }}
-    .badge-wellness {{ background: rgba(52, 211, 153, 0.2); color: #34d399; }}
-    .badge-ambulatory {{ background: rgba(56, 189, 248, 0.2); color: #38bdf8; }}
-
-    footer {{
-      margin-top: 40px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border-color);
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-secondary);
+      background-color: #f1f5f9;
     }}
 
     @media (max-width: 768px) {{
-      .grid-2, .grid-3 {{
-        grid-template-columns: 1fr;
-      }}
+      .chart-grid-2 {{ grid-template-columns: 1fr; }}
     }}
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="header-title">
-      <h1>Synthea Healthcare Executive Analytics</h1>
-      <p>Medallion Data Pipeline (S3 → Snowflake → dbt 3NF + SCD2 → Star Schema OBT)</p>
+  <!-- HEADER -->
+  <div class="dashboard-header">
+    <div class="header-text">
+      <h1>Hospital Operations & Patient Analytics</h1>
+      <p>Executive Performance & Billing Summary</p>
     </div>
-    <div class="filters">
-      <div class="filter-group">
-        <label>Hospital Facility</label>
-        <select id="filter-hospital">
-          <option value="ALL">All Hospitals</option>
-        </select>
+    <div class="controls">
+      <div class="control-item">
+        <label>Hospital</label>
+        <select id="filter-hospital"><option value="ALL">All Facilities</option></select>
       </div>
-      <div class="filter-group">
+      <div class="control-item">
         <label>Insurance Payer</label>
-        <select id="filter-payer">
-          <option value="ALL">All Payers</option>
-        </select>
+        <select id="filter-payer"><option value="ALL">All Payers</option></select>
       </div>
-      <div class="filter-group">
-        <label>Encounter Class</label>
-        <select id="filter-class">
-          <option value="ALL">All Classes</option>
-        </select>
+      <div class="control-item">
+        <label>Encounter Type</label>
+        <select id="filter-class"><option value="ALL">All Visit Types</option></select>
       </div>
-      <button class="btn-reset" onclick="resetFilters()">Reset</button>
+      <button class="btn-reset" onclick="resetFilters()">Reset Filters</button>
     </div>
-  </header>
+  </div>
 
-  <!-- KPI CARDS -->
-  <div class="kpi-grid">
-    <div class="kpi-card" style="--card-accent: var(--accent-blue);">
-      <div class="kpi-title">Total Encounters</div>
-      <div class="kpi-value" id="kpi-encounters">0</div>
-      <div class="kpi-subtext">▲ 100% Verified in DW</div>
+  <!-- KPI SUMMARY CARDS -->
+  <div class="kpi-row">
+    <div class="kpi-box">
+      <div class="kpi-label">Total Patient Encounters</div>
+      <div class="kpi-val" id="kpi-encounters">0</div>
     </div>
-    <div class="kpi-card" style="--card-accent: var(--accent-emerald);">
-      <div class="kpi-title">Billed Claims Revenue</div>
-      <div class="kpi-value" id="kpi-revenue">$0</div>
-      <div class="kpi-subtext">▲ Total Billed Cost</div>
+    <div class="kpi-box">
+      <div class="kpi-label">Total Billed Revenue</div>
+      <div class="kpi-val" id="kpi-revenue">$0</div>
     </div>
-    <div class="kpi-card" style="--card-accent: var(--accent-indigo);">
-      <div class="kpi-title">Payer Coverage Rate</div>
-      <div class="kpi-value" id="kpi-coverage">0%</div>
-      <div class="kpi-subtext">Insurance Reimbursed</div>
+    <div class="kpi-box">
+      <div class="kpi-label">Payer Coverage Rate</div>
+      <div class="kpi-val" id="kpi-coverage">0%</div>
     </div>
-    <div class="kpi-card" style="--card-accent: var(--accent-rose);">
-      <div class="kpi-title">Avg Out-of-Pocket</div>
-      <div class="kpi-value" id="kpi-copay">$0</div>
-      <div class="kpi-subtext">Patient Responsibility</div>
+    <div class="kpi-box">
+      <div class="kpi-label">Avg Out-of-Pocket Cost</div>
+      <div class="kpi-val" id="kpi-copay">$0</div>
     </div>
-    <div class="kpi-card" style="--card-accent: var(--accent-amber);">
-      <div class="kpi-title">Avg Stay Duration</div>
-      <div class="kpi-value" id="kpi-stay">0 hrs</div>
-      <div class="kpi-subtext">Length of Stay</div>
+    <div class="kpi-box">
+      <div class="kpi-label">Avg Length of Stay</div>
+      <div class="kpi-val" id="kpi-stay">0 hrs</div>
     </div>
   </div>
 
   <!-- NAVIGATION TABS -->
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('tab-overview', this)">Executive Command Center</button>
-    <button class="tab-btn" onclick="switchTab('tab-financials', this)">Financial & Payer Analytics</button>
-    <button class="tab-btn" onclick="switchTab('tab-operations', this)">Hospital & Physician Performance</button>
-    <button class="tab-btn" onclick="switchTab('tab-clinical', this)">Clinical & Demographics</button>
+  <div class="tabs-bar">
+    <button class="tab-item active" onclick="showTab('tab-overview', this)">Executive Summary</button>
+    <button class="tab-item" onclick="showTab('tab-financials', this)">Financial & Payer Breakdown</button>
+    <button class="tab-item" onclick="showTab('tab-operations', this)">Hospital & Physician Metrics</button>
+    <button class="tab-item" onclick="showTab('tab-clinical', this)">Clinical & Demographics</button>
   </div>
 
-  <!-- TAB 1: EXECUTIVE COMMAND CENTER -->
-  <div id="tab-overview" class="tab-content active">
-    <div class="grid-2">
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3>Monthly Encounter & Revenue Trend</h3>
-        </div>
-        <div class="chart-container">
-          <canvas id="chart-monthly-trend"></canvas>
-        </div>
+  <!-- TAB 1: EXECUTIVE SUMMARY -->
+  <div id="tab-overview" class="tab-page active">
+    <div class="chart-grid-2">
+      <div class="card">
+        <div class="card-title">Monthly Patient Encounter Volume</div>
+        <div class="chart-box"><canvas id="chart-monthly"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3>Encounter Class Distribution</h3>
-        </div>
-        <div class="chart-container">
-          <canvas id="chart-encounter-class"></canvas>
-        </div>
+      <div class="card">
+        <div class="card-title">Encounter Class Breakdown</div>
+        <div class="chart-box"><canvas id="chart-class"></canvas></div>
       </div>
     </div>
-    <div class="chart-card">
-      <div class="chart-header">
-        <h3>Top Diagnosed Medical Conditions</h3>
-      </div>
-      <div class="chart-container" style="min-height: 220px;">
-        <canvas id="chart-top-conditions"></canvas>
-      </div>
+    <div class="card">
+      <div class="card-title">Top Diagnosed Conditions</div>
+      <div class="chart-box" style="min-height: 220px;"><canvas id="chart-conditions"></canvas></div>
     </div>
   </div>
 
-  <!-- TAB 2: FINANCIAL & PAYER ANALYTICS -->
-  <div id="tab-financials" class="tab-content">
-    <div class="grid-2">
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3>Billed Cost vs Insurance Coverage by Visit Class</h3>
-        </div>
-        <div class="chart-container">
-          <canvas id="chart-cost-vs-coverage"></canvas>
-        </div>
+  <!-- TAB 2: FINANCIALS -->
+  <div id="tab-financials" class="tab-page">
+    <div class="chart-grid-2">
+      <div class="card">
+        <div class="card-title">Billed Cost vs Insurance Coverage by Visit Type</div>
+        <div class="chart-box"><canvas id="chart-coverage"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3>Patient Financial Responsibility by Race</h3>
-        </div>
-        <div class="chart-container">
-          <canvas id="chart-race-copay"></canvas>
-        </div>
+      <div class="card">
+        <div class="card-title">Patient Out-of-Pocket Expense by Race</div>
+        <div class="chart-box"><canvas id="chart-copay-race"></canvas></div>
       </div>
     </div>
-    <div class="chart-card">
-      <div class="chart-header">
-        <h3>Insurance Payer Financial Performance Matrix</h3>
-      </div>
-      <div class="table-container">
-        <table id="table-payer-matrix">
+    <div class="card">
+      <div class="card-title">Insurance Payer Financial Performance</div>
+      <div class="table-wrapper">
+        <table id="table-payers">
           <thead>
             <tr>
               <th>Payer Name</th>
               <th>Total Encounters</th>
-              <th>Billed Revenue</th>
-              <th>Payer Payout</th>
-              <th>Patient Copay</th>
+              <th>Total Billed Revenue</th>
+              <th>Payer Coverage</th>
+              <th>Patient Out-of-Pocket</th>
               <th>Coverage Rate</th>
             </tr>
           </thead>
@@ -482,45 +368,31 @@ def build_dashboard():
     </div>
   </div>
 
-  <!-- TAB 3: HOSPITAL & PHYSICIAN PERFORMANCE -->
-  <div id="tab-operations" class="tab-content">
-    <div class="grid-2">
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3>Hospital Facility Revenue Ranking</h3>
-        </div>
-        <div class="chart-container">
-          <canvas id="chart-hospital-revenue"></canvas>
-        </div>
+  <!-- TAB 3: OPERATIONS -->
+  <div id="tab-operations" class="tab-page">
+    <div class="chart-grid-2">
+      <div class="card">
+        <div class="card-title">Hospital Facility Revenue Ranking</div>
+        <div class="chart-box"><canvas id="chart-hospitals"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3>Physician Specialty Workload Distribution</h3>
-        </div>
-        <div class="chart-container">
-          <canvas id="chart-specialty-dist"></canvas>
-        </div>
+      <div class="card">
+        <div class="card-title">Physician Specialty Distribution</div>
+        <div class="chart-box"><canvas id="chart-specialties"></canvas></div>
       </div>
     </div>
   </div>
 
-  <!-- TAB 4: CLINICAL & DEMOGRAPHICS -->
-  <div id="tab-clinical" class="tab-content">
-    <div class="grid-2">
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3>Patient Demographics by Gender & Race</h3>
-        </div>
-        <div class="chart-container">
-          <canvas id="chart-demographics"></canvas>
-        </div>
+  <!-- TAB 4: CLINICAL -->
+  <div id="tab-clinical" class="tab-page">
+    <div class="chart-grid-2">
+      <div class="card">
+        <div class="card-title">Patient Demographics by Gender</div>
+        <div class="chart-box"><canvas id="chart-gender"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3>Top Prescribed Medications Summary</h3>
-        </div>
-        <div class="table-container">
-          <table id="table-medications">
+      <div class="card">
+        <div class="card-title">Top Prescribed Medications Summary</div>
+        <div class="table-wrapper">
+          <table id="table-meds">
             <thead>
               <tr>
                 <th>Medication Description</th>
@@ -535,153 +407,142 @@ def build_dashboard():
     </div>
   </div>
 
-  <footer>
-    Synthea Healthcare Data Pipeline • AWS S3 Ingestion • Snowflake DW • dbt 3NF + SCD Type 2 Snapshots • Star Schema Power BI Export
-  </footer>
-
   <script>
-    const rawData = {json_data};
-    let charts = {{}};
+    const dataset = {json_data};
+    let activeCharts = {{}};
 
     function init() {{
-      populateFilters();
-      renderDashboard();
+      buildDropdowns();
+      updateDashboard();
 
-      document.getElementById('filter-hospital').addEventListener('change', renderDashboard);
-      document.getElementById('filter-payer').addEventListener('change', renderDashboard);
-      document.getElementById('filter-class').addEventListener('change', renderDashboard);
+      document.getElementById('filter-hospital').addEventListener('change', updateDashboard);
+      document.getElementById('filter-payer').addEventListener('change', updateDashboard);
+      document.getElementById('filter-class').addEventListener('change', updateDashboard);
     }}
 
     function getFilteredData() {{
-      const hosp = document.getElementById('filter-hospital').value;
-      const pay = document.getElementById('filter-payer').value;
-      const cls = document.getElementById('filter-class').value;
+      const h = document.getElementById('filter-hospital').value;
+      const p = document.getElementById('filter-payer').value;
+      const c = document.getElementById('filter-class').value;
 
-      return rawData.filter(d => {{
-        if (hosp !== 'ALL' && d.hospital_name !== hosp) return false;
-        if (pay !== 'ALL' && d.payor_name !== pay) return false;
-        if (cls !== 'ALL' && d.encounter_class !== cls) return false;
+      return dataset.filter(d => {{
+        if (h !== 'ALL' && d.hospital_name !== h) return false;
+        if (p !== 'ALL' && d.payor_name !== p) return false;
+        if (c !== 'ALL' && d.encounter_class !== c) return false;
         return true;
       }});
     }}
 
-    function populateFilters() {{
-      const hospitals = [...new Set(rawData.map(d => d.hospital_name).filter(Boolean))].sort();
-      const payors = [...new Set(rawData.map(d => d.payor_name).filter(Boolean))].sort();
-      const classes = [...new Set(rawData.map(d => d.encounter_class).filter(Boolean))].sort();
+    function buildDropdowns() {{
+      const hosps = [...new Set(dataset.map(d => d.hospital_name).filter(Boolean))].sort();
+      const payors = [...new Set(dataset.map(d => d.payor_name).filter(Boolean))].sort();
+      const classes = [...new Set(dataset.map(d => d.encounter_class).filter(Boolean))].sort();
 
-      const hSelect = document.getElementById('filter-hospital');
-      hospitals.forEach(h => hSelect.add(new Option(h, h)));
+      const hSel = document.getElementById('filter-hospital');
+      hosps.forEach(item => hSel.add(new Option(item, item)));
 
-      const pSelect = document.getElementById('filter-payer');
-      payors.forEach(p => pSelect.add(new Option(p, p)));
+      const pSel = document.getElementById('filter-payer');
+      payors.forEach(item => pSel.add(new Option(item, item)));
 
-      const cSelect = document.getElementById('filter-class');
-      classes.forEach(c => cSelect.add(new Option(c, c)));
+      const cSel = document.getElementById('filter-class');
+      classes.forEach(item => cSel.add(new Option(item, item)));
     }}
 
     function resetFilters() {{
       document.getElementById('filter-hospital').value = 'ALL';
       document.getElementById('filter-payer').value = 'ALL';
       document.getElementById('filter-class').value = 'ALL';
-      renderDashboard();
+      updateDashboard();
     }}
 
-    function switchTab(tabId, btn) {{
-      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+    function showTab(tabId, btn) {{
+      document.querySelectorAll('.tab-page').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
       btn.classList.add('active');
     }}
 
-    function renderDashboard() {{
+    function updateDashboard() {{
       const data = getFilteredData();
 
-      // KPIs
-      const totalEncounters = data.length;
-      const totalRevenue = data.reduce((sum, d) => sum + parseFloat(d.total_claim_cost || 0), 0);
-      const totalCoverage = data.reduce((sum, d) => sum + parseFloat(d.payer_coverage || 0), 0);
-      const totalCopay = data.reduce((sum, d) => sum + parseFloat(d.patient_out_of_pocket_cost || 0), 0);
-      const avgStay = totalEncounters ? (data.reduce((sum, d) => sum + parseFloat(d.length_of_stay_hours || 0), 0) / totalEncounters).toFixed(1) : 0;
-      const covRate = totalRevenue ? ((totalCoverage / totalRevenue) * 100).toFixed(1) : 0;
+      const totalCount = data.length;
+      const totalRev = data.reduce((acc, d) => acc + parseFloat(d.total_claim_cost || 0), 0);
+      const totalCov = data.reduce((acc, d) => acc + parseFloat(d.payer_coverage || 0), 0);
+      const totalCopay = data.reduce((acc, d) => acc + parseFloat(d.patient_out_of_pocket_cost || 0), 0);
+      const avgStay = totalCount ? (data.reduce((acc, d) => acc + parseFloat(d.length_of_stay_hours || 0), 0) / totalCount).toFixed(1) : 0;
+      const covPct = totalRev ? ((totalCov / totalRev) * 100).toFixed(1) : 0;
 
-      document.getElementById('kpi-encounters').innerText = totalEncounters.toLocaleString();
-      document.getElementById('kpi-revenue').innerText = '$' + Math.round(totalRevenue).toLocaleString();
-      document.getElementById('kpi-coverage').innerText = covRate + '%';
-      document.getElementById('kpi-copay').innerText = '$' + Math.round(totalEncounters ? totalCopay / totalEncounters : 0).toLocaleString();
+      document.getElementById('kpi-encounters').innerText = totalCount.toLocaleString();
+      document.getElementById('kpi-revenue').innerText = '$' + Math.round(totalRev).toLocaleString();
+      document.getElementById('kpi-coverage').innerText = covPct + '%';
+      document.getElementById('kpi-copay').innerText = '$' + Math.round(totalCount ? totalCopay / totalCount : 0).toLocaleString();
       document.getElementById('kpi-stay').innerText = avgStay + ' hrs';
 
-      renderMonthlyTrend(data);
-      renderEncounterClass(data);
-      renderTopConditions(data);
-      renderCostVsCoverage(data);
+      renderMonthly(data);
+      renderClass(data);
+      renderConditions(data);
+      renderCoverage(data);
       renderRaceCopay(data);
-      renderPayerMatrix(data);
-      renderHospitalRevenue(data);
-      renderSpecialtyDist(data);
-      renderDemographics(data);
-      renderMedicationsTable(data);
+      renderPayerTable(data);
+      renderHospitals(data);
+      renderSpecialties(data);
+      renderGender(data);
+      renderMedsTable(data);
     }}
 
-    function createOrUpdateChart(chartId, type, data, options) {{
-      if (charts[chartId]) charts[chartId].destroy();
-      const ctx = document.getElementById(chartId).getContext('2d');
-      charts[chartId] = new Chart(ctx, {{ type, data, options }});
+    function renderChart(id, type, data, options) {{
+      if (activeCharts[id]) activeCharts[id].destroy();
+      const ctx = document.getElementById(id).getContext('2d');
+      activeCharts[id] = new Chart(ctx, {{ type, data, options }});
     }}
 
-    function renderMonthlyTrend(data) {{
+    function renderMonthly(data) {{
       const monthly = {{}};
       data.forEach(d => {{
         if (d.encounter_start_at) {{
-          const month = d.encounter_start_at.substring(0, 7);
-          monthly[month] = (monthly[month] || 0) + 1;
+          const m = d.encounter_start_at.substring(0, 7);
+          monthly[m] = (monthly[m] || 0) + 1;
         }}
       }});
       const labels = Object.keys(monthly).sort();
-      const values = labels.map(l => monthly[l]);
 
-      createOrUpdateChart('chart-monthly-trend', 'line', {{
+      renderChart('chart-monthly', 'line', {{
         labels,
         datasets: [{{
           label: 'Encounters',
-          data: values,
-          borderColor: '#38bdf8',
-          backgroundColor: 'rgba(56, 189, 248, 0.1)',
+          data: labels.map(l => monthly[l]),
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37, 99, 235, 0.1)',
           fill: true,
-          tension: 0.3
+          tension: 0.2
         }}]
       }}, {{
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {{ legend: {{ display: false }} }},
-        scales: {{
-          x: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ color: '#94a3b8' }} }},
-          y: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ color: '#94a3b8' }} }}
-        }}
+        plugins: {{ legend: {{ display: false }} }}
       }});
     }}
 
-    function renderEncounterClass(data) {{
+    function renderClass(data) {{
       const counts = {{}};
       data.forEach(d => {{
-        const cls = d.encounter_class || 'Other';
-        counts[cls] = (counts[cls] || 0) + 1;
+        const c = d.encounter_class || 'Other';
+        counts[c] = (counts[c] || 0) + 1;
       }});
 
-      createOrUpdateChart('chart-encounter-class', 'doughnut', {{
+      renderChart('chart-class', 'doughnut', {{
         labels: Object.keys(counts),
         datasets: [{{
           data: Object.values(counts),
-          backgroundColor: ['#38bdf8', '#818cf8', '#34d399', '#fbbf24', '#f43f5e']
+          backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444']
         }}]
       }}, {{
         responsive: true,
-        maintainAspectRatio: false,
-        plugins: {{ legend: {{ position: 'right', labels: {{ color: '#f8fafc' }} }} }}
+        maintainAspectRatio: false
       }});
     }}
 
-    function renderTopConditions(data) {{
+    function renderConditions(data) {{
       const conds = {{}};
       data.forEach(d => {{
         if (d.condition_description) {{
@@ -690,88 +551,73 @@ def build_dashboard():
       }});
       const sorted = Object.entries(conds).sort((a,b) => b[1] - a[1]).slice(0, 5);
 
-      createOrUpdateChart('chart-top-conditions', 'bar', {{
+      renderChart('chart-conditions', 'bar', {{
         labels: sorted.map(s => s[0]),
         datasets: [{{
-          label: 'Diagnoses Count',
+          label: 'Diagnoses',
           data: sorted.map(s => s[1]),
-          backgroundColor: '#818cf8',
-          borderRadius: 6
+          backgroundColor: '#3b82f6',
+          borderRadius: 4
         }}]
       }}, {{
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {{ legend: {{ display: false }} }},
-        scales: {{
-          x: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ color: '#94a3b8' }} }},
-          y: {{ grid: {{ display: false }}, ticks: {{ color: '#f8fafc' }} }}
-        }}
+        plugins: {{ legend: {{ display: false }} }}
       }});
     }}
 
-    function renderCostVsCoverage(data) {{
+    function renderCoverage(data) {{
       const byClass = {{}};
       data.forEach(d => {{
-        const cls = d.encounter_class || 'Other';
-        if (!byClass[cls]) byClass[cls] = {{ billed: 0, covered: 0 }};
-        byClass[cls].billed += parseFloat(d.total_claim_cost || 0);
-        byClass[cls].covered += parseFloat(d.payer_coverage || 0);
+        const c = d.encounter_class || 'Other';
+        if (!byClass[c]) byClass[c] = {{ billed: 0, covered: 0 }};
+        byClass[c].billed += parseFloat(d.total_claim_cost || 0);
+        byClass[c].covered += parseFloat(d.payer_coverage || 0);
       }});
-
       const labels = Object.keys(byClass);
-      createOrUpdateChart('chart-cost-vs-coverage', 'bar', {{
+
+      renderChart('chart-coverage', 'bar', {{
         labels,
         datasets: [
-          {{ label: 'Total Billed', data: labels.map(l => byClass[l].billed), backgroundColor: '#38bdf8', borderRadius: 4 }},
-          {{ label: 'Payer Covered', data: labels.map(l => byClass[l].covered), backgroundColor: '#34d399', borderRadius: 4 }}
+          {{ label: 'Billed', data: labels.map(l => byClass[l].billed), backgroundColor: '#2563eb' }},
+          {{ label: 'Covered', data: labels.map(l => byClass[l].covered), backgroundColor: '#10b981' }}
         ]
       }}, {{
         responsive: true,
-        maintainAspectRatio: false,
-        plugins: {{ legend: {{ labels: {{ color: '#f8fafc' }} }} }},
-        scales: {{
-          x: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ color: '#94a3b8' }} }},
-          y: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ color: '#94a3b8' }} }}
-        }}
+        maintainAspectRatio: false
       }});
     }}
 
     function renderRaceCopay(data) {{
-      const raceMap = {{}};
+      const races = {{}};
       data.forEach(d => {{
         const r = d.patient_race || 'Unknown';
-        if (!raceMap[r]) raceMap[r] = {{ copay: 0, count: 0 }};
-        raceMap[r].copay += parseFloat(d.patient_out_of_pocket_cost || 0);
-        raceMap[r].count += 1;
+        if (!races[r]) races[r] = {{ total: 0, count: 0 }};
+        races[r].total += parseFloat(d.patient_out_of_pocket_cost || 0);
+        races[r].count += 1;
       }});
+      const labels = Object.keys(races);
 
-      const labels = Object.keys(raceMap);
-      const avgs = labels.map(l => raceMap[l].count ? (raceMap[l].copay / raceMap[l].count) : 0);
-
-      createOrUpdateChart('chart-race-copay', 'bar', {{
+      renderChart('chart-copay-race', 'bar', {{
         labels,
         datasets: [{{
           label: 'Avg Out-of-Pocket ($)',
-          data: avgs,
-          backgroundColor: '#f43f5e',
-          borderRadius: 6
+          data: labels.map(l => races[l].count ? (races[l].total / races[l].count) : 0),
+          backgroundColor: '#ef4444',
+          borderRadius: 4
         }}]
       }}, {{
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {{ legend: {{ display: false }} }},
-        scales: {{
-          x: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ color: '#94a3b8' }} }},
-          y: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ color: '#94a3b8' }} }}
-        }}
+        plugins: {{ legend: {{ display: false }} }}
       }});
     }}
 
-    function renderPayerMatrix(data) {{
+    function renderPayerTable(data) {{
       const payers = {{}};
       data.forEach(d => {{
-        const p = d.payor_name || 'Uninsured / Self-Pay';
+        const p = d.payor_name || 'Self-Pay';
         if (!payers[p]) payers[p] = {{ count: 0, billed: 0, covered: 0, copay: 0 }};
         payers[p].count += 1;
         payers[p].billed += parseFloat(d.total_claim_cost || 0);
@@ -779,91 +625,84 @@ def build_dashboard():
         payers[p].copay += parseFloat(d.patient_out_of_pocket_cost || 0);
       }});
 
-      const tbody = document.querySelector('#table-payer-matrix tbody');
+      const tbody = document.querySelector('#table-payers tbody');
       tbody.innerHTML = '';
       Object.entries(payers).forEach(([name, p]) => {{
-        const covRate = p.billed ? ((p.covered / p.billed) * 100).toFixed(1) : 0;
-        const row = `<tr>
+        const pct = p.billed ? ((p.covered / p.billed) * 100).toFixed(1) : 0;
+        tbody.innerHTML += `<tr>
           <td><strong>${{name}}</strong></td>
           <td>${{p.count}}</td>
           <td>$${{Math.round(p.billed).toLocaleString()}}</td>
           <td>$${{Math.round(p.covered).toLocaleString()}}</td>
           <td>$${{Math.round(p.copay).toLocaleString()}}</td>
-          <td><span class="badge badge-wellness">${{covRate}}%</span></td>
+          <td>${{pct}}%</td>
         </tr>`;
-        tbody.innerHTML += row;
       }});
     }}
 
-    function renderHospitalRevenue(data) {{
+    function renderHospitals(data) {{
       const hosps = {{}};
       data.forEach(d => {{
-        const h = d.hospital_name || 'Unknown Facility';
+        const h = d.hospital_name || 'Unknown';
         hosps[h] = (hosps[h] || 0) + parseFloat(d.total_claim_cost || 0);
       }});
       const sorted = Object.entries(hosps).sort((a,b) => b[1] - a[1]);
 
-      createOrUpdateChart('chart-hospital-revenue', 'bar', {{
+      renderChart('chart-hospitals', 'bar', {{
         labels: sorted.map(s => s[0]),
         datasets: [{{
           label: 'Total Revenue ($)',
           data: sorted.map(s => s[1]),
-          backgroundColor: '#38bdf8',
-          borderRadius: 6
+          backgroundColor: '#2563eb',
+          borderRadius: 4
         }}]
       }}, {{
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {{ legend: {{ display: false }} }},
-        scales: {{
-          x: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ color: '#94a3b8' }} }},
-          y: {{ grid: {{ display: false }}, ticks: {{ color: '#f8fafc' }} }}
-        }}
+        plugins: {{ legend: {{ display: false }} }}
       }});
     }}
 
-    function renderSpecialtyDist(data) {{
+    function renderSpecialties(data) {{
       const specs = {{}};
       data.forEach(d => {{
         const s = d.doctor_specialty || 'General Practice';
         specs[s] = (specs[s] || 0) + 1;
       }});
 
-      createOrUpdateChart('chart-specialty-dist', 'doughnut', {{
+      renderChart('chart-specialties', 'pie', {{
         labels: Object.keys(specs),
         datasets: [{{
           data: Object.values(specs),
-          backgroundColor: ['#818cf8', '#38bdf8', '#fbbf24', '#34d399', '#f43f5e', '#a855f7']
+          backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4']
         }}]
       }}, {{
         responsive: true,
-        maintainAspectRatio: false,
-        plugins: {{ legend: {{ position: 'right', labels: {{ color: '#f8fafc' }} }} }}
+        maintainAspectRatio: false
       }});
     }}
 
-    function renderDemographics(data) {{
+    function renderGender(data) {{
       const genders = {{}};
       data.forEach(d => {{
         const g = d.patient_gender === 'M' ? 'Male' : (d.patient_gender === 'F' ? 'Female' : 'Other');
         genders[g] = (genders[g] || 0) + 1;
       }});
 
-      createOrUpdateChart('chart-demographics', 'pie', {{
+      renderChart('chart-gender', 'pie', {{
         labels: Object.keys(genders),
         datasets: [{{
           data: Object.values(genders),
-          backgroundColor: ['#38bdf8', '#f43f5e']
+          backgroundColor: ['#2563eb', '#ef4444']
         }}]
       }}, {{
         responsive: true,
-        maintainAspectRatio: false,
-        plugins: {{ legend: {{ position: 'right', labels: {{ color: '#f8fafc' }} }} }}
+        maintainAspectRatio: false
       }});
     }}
 
-    function renderMedicationsTable(data) {{
+    function renderMedsTable(data) {{
       const meds = {{}};
       data.forEach(d => {{
         if (d.medication_description) {{
@@ -874,16 +713,15 @@ def build_dashboard():
         }}
       }});
 
-      const tbody = document.querySelector('#table-medications tbody');
+      const tbody = document.querySelector('#table-meds tbody');
       tbody.innerHTML = '';
       Object.entries(meds).sort((a,b) => b[1].count - a[1].count).slice(0, 8).forEach(([desc, m]) => {{
-        const avgCost = m.count ? (m.total / m.count).toFixed(2) : 0;
-        const row = `<tr>
+        const avg = m.count ? (m.total / m.count).toFixed(2) : 0;
+        tbody.innerHTML += `<tr>
           <td><strong>${{desc}}</strong></td>
           <td>${{m.count}}</td>
-          <td>$${{avgCost}}</td>
+          <td>$${{avg}}</td>
         </tr>`;
-        tbody.innerHTML += row;
       }});
     }}
 
@@ -896,7 +734,7 @@ def build_dashboard():
     with open(out_html, "w", encoding="utf-8") as f:
         f.write(html_content)
 
-    print(f"✅ Dashboard generated successfully: {out_html}")
+    print(f"✅ Clean Human-style Dashboard generated: {out_html}")
 
 if __name__ == "__main__":
     build_dashboard()
