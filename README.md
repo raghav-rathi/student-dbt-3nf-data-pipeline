@@ -1,4 +1,4 @@
-# 🎓 HarshProject: 3NF Database Normalization & DBT Data Pipeline
+# 🎓 Student DBT 3NF Data Pipeline
 
 ## 📋 Executive Summary
 This project takes an unnormalized student enrollment dataset containing multi-valued attributes and normalizes it up to **3rd Normal Form (3NF)** using **DBT (Data Build Tool)** and **DuckDB**. It outputs an analytics-ready Star Schema table for **Power BI reporting**.
@@ -110,7 +110,7 @@ dbt test
 ---
 
 ## 📦 Deliverables Checklist
-- [x] **DBT Project (ZIP):** `HarshProject_DBT.zip`
+- [x] **DBT Project (ZIP):** `student_dbt_3nf_data_pipeline.zip`
 - [x] **Data Warehouse Screenshots/Outputs:** `screenshots/data_warehouse_tables.txt`
 - [x] **Power BI Dataset:** `power_bi/obt_student_analytics.csv`
 - [x] **Power BI Setup Guide:** `power_bi/power_bi_setup_guide.md`

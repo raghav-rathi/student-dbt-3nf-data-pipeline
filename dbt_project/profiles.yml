@@ -1,4 +1,4 @@
-harsh_student_dbt:
+student_dbt_3nf_pipeline:
   target: dev
   outputs:
     dev:
