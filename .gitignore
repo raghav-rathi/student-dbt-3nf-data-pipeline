@@ -1,28 +1,14 @@
-# Environment variables & secrets
-.env
-*.env
-
-# Virtual environment
+# Environments & Packages
 venv/
-
-# DuckDB database files
-*.duckdb
-*.duckdb.wal
-
-# dbt artifacts
-dbt_project/target/
-dbt_project/logs/
-dbt_project/dbt_packages/
-
-# Python
-__pycache__/
 *.pyc
-.pytest_cache/
-
-# OS
+__pycache__/
 .DS_Store
-Thumbs.db
 
-# IDE
-.vscode/
-.idea/
+# dbt Artifacts
+dbt_project/logs/
+dbt_project/target/
+dbt_project/.user.yml
+
+# Data Cache
+data/*.duckdb
+data/*.csv
